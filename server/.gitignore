@@ -1,0 +1,28 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Environment variables
+.env
+
+# Firebase service accounts
+keys/
+*.json
+
+# Logs
+logs/
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/
+
+# Cloud Run / Docker
+*.env.production
+*.env.local
