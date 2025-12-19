@@ -18,39 +18,40 @@ export interface ApiResponse<T = any> {
 
 const axiosClient: AxiosInstance = axios.create({
   baseURL: API_URL,
-  headers: { "Content-Type": "application/json" },
+  // ❌ DO NOT force Content-Type globally
 });
 
 // 🔐 Attach Firebase ID Token
 axiosClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getAccessToken();
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// 🔁 Response + Error Handling
+// 🔁 Error handling ONLY (no success toasts here)
 axiosClient.interceptors.response.use(
   (response: AxiosResponse<ApiResponse>) => {
-    const msg = response.data?.message;
-    if (msg) toast.success(msg);
     return response;
   },
-  async (error: AxiosError) => {
-    // 🔴 Unauthorized → force logout
-    if (error.response?.status === 401) {
+  async (error: AxiosError<ApiResponse>) => {
+    const status = error.response?.status;
+
+    // 🔴 Unauthorized → clear auth ONLY
+    if (status === 401) {
       clearAuth();
       toast.error("Session expired. Please log in again.");
-      window.location.href = "/login";
       return Promise.reject(error);
     }
 
-    // 🧠 Other errors
+    // 🧠 Extract backend message
     let message = "Something went wrong";
-    if (error.response?.data && typeof error.response.data === "object") {
-      message = (error.response.data as any).message || message;
+    if (error.response?.data?.message) {
+      message = error.response.data.message;
     } else if (error.message) {
       message = error.message;
     }

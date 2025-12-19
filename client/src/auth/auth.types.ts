@@ -3,8 +3,10 @@ export type UserRole =
   | "mess_manager"
   | "hostel_office";
 
-export interface AuthUser {
+export type AuthUser = {
   uid: string;
   email: string;
-  role: UserRole;
-}
+  role: "student" | "mess_manager" | "hostel_office";
+  studentRoll?: string;
+  messRoll?: string;
+};

@@ -1,5 +1,5 @@
 
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/DashboardNavbar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
