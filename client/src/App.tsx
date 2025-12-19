@@ -12,6 +12,7 @@ import MessDashboard from "./pages/mess/MessDashboard.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 
 import { Toaster } from "react-hot-toast";
+import ApplyMessManager from "./pages/mess/ApplyMessManager.tsx";
 
 function App() {
   return (
@@ -27,6 +28,10 @@ function App() {
           {/* 🌍 PUBLIC ROUTES */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route
+          path="/apply-mess-manager"
+          element={<ApplyMessManager />}
+        />
 
           {/* 🔐 AUTHENTICATED ROUTES */}
           {/* <Route element={<ProtectedRoute />}>

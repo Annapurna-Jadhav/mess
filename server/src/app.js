@@ -36,6 +36,9 @@ app.use((req, res, next) => {
 // pages 
 import authRoutes from "./routes/auth.routes.js";
 import studentRoutes from "./routes/student.routes.js";
+import messRoutes from "./routes/mess.routes.js";
+
+app.use("/api/v1/mess", messRoutes);
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/student", studentRoutes);
