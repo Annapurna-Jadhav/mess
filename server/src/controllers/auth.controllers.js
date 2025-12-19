@@ -5,7 +5,7 @@ import ApiError from "../utils/ApiError.js";
 
 const db = admin.firestore();
 
-
+const ADMIN_EMAIL=process.env.ADMIN_EMAIL;
 
 const parseStudent = (emailPrefix) => {
   const rollMatch = emailPrefix.match(/\d{2,3}[a-z]{2,3}\d{3}/i);
@@ -38,10 +38,12 @@ export const continueAuth = asyncHandler(async (req, res) => {
   }
 
   const emailPrefix = email.split("@")[0];
+  
+const ADMIN_EMAIL=process.env.ADMIN_EMAIL;
 
-  // ---------- HOSTEL ADMIN ----------
-  if (email === "hosteloffice@nitk.edu.in") {
-    const ref = db.collection("admins").doc(uid);
+  
+  if (email === ADMIN_EMAIL) {
+    const ref = db.collection("hostel_office").doc(uid);
 
     await ref.set(
       {

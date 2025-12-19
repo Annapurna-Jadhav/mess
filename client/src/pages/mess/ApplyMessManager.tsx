@@ -12,7 +12,8 @@ export default function ApplyMessManager() {
   const [form, setForm] = useState({
     email: "",
     messName: "",
-    campusType: "BOYS",
+    campusType: "BOTH",
+    foodType: "BOTH",
 
     prices: {
       breakfast: "",
@@ -107,6 +108,38 @@ export default function ApplyMessManager() {
           </section>
 
           <Separator />
+          <div>
+  <Label>Food Type</Label>
+  <div className="flex gap-3 mt-2">
+    {[
+      { label: "Veg", value: "VEG" },
+      { label: "Non-Veg", value: "NON_VEG" },
+      { label: "Both", value: "BOTH" },
+    ].map((opt) => (
+      <button
+        key={opt.value}
+        type="button"
+        onClick={() =>
+          setForm({ ...form, foodType: opt.value })
+        }
+        className={`px-4 py-2 rounded-xl border text-sm font-medium transition
+          ${
+            form.foodType === opt.value
+              ? "bg-[#6770d2] text-white border-[#6770d2]"
+              : "bg-background hover:bg-muted"
+          }
+        `}
+      >
+        {opt.label}
+      </button>
+    ))}
+  </div>
+
+  <p className="text-xs text-muted-foreground mt-1">
+    This helps students choose mess based on dietary preference
+  </p>
+</div>
+<Separator/>
 
           {/* MEAL PRICING */}
           <section className="space-y-4">

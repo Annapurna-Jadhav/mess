@@ -1,10 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import type { UserRole } from "@/auth/auth.types.ts";
+import type { UserRole } from "@/auth/auth.types";
 
-interface ProtectedRouteProps {
-  role?: UserRole | UserRole[];
-}
+/* ================= CONFIG ================= */
 
 const roleRedirectMap: Record<UserRole, string> = {
   student: "/student/dashboard",
@@ -12,10 +10,16 @@ const roleRedirectMap: Record<UserRole, string> = {
   hostel_office: "/admin/dashboard",
 };
 
+interface ProtectedRouteProps {
+  role: UserRole; // 👈 REQUIRED, not optional
+}
+
+/* ================= COMPONENT ================= */
+
 const ProtectedRoute = ({ role }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
 
-  // ⏳ Auth still resolving
+  /* ⏳ Auth resolving */
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-muted-foreground">
@@ -24,21 +28,20 @@ const ProtectedRoute = ({ role }: ProtectedRouteProps) => {
     );
   }
 
-  // 🔐 Not logged in
+  /* 🔐 Not logged in */
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // 🛑 Role mismatch
-  if (role) {
-    const allowedRoles = Array.isArray(role) ? role : [role];
+  /* 🧼 Normalize role once */
+  const userRole = user.role.trim().toLowerCase() as UserRole;
 
-    if (!allowedRoles.includes(user.role)) {
-      return <Navigate to={roleRedirectMap[user.role]} replace />;
-    }
+  /* 🛑 Wrong role → send user to THEIR dashboard */
+  if (userRole !== role) {
+    return <Navigate to={roleRedirectMap[userRole]} replace />;
   }
 
-  // ✅ Allowed
+  /* ✅ Correct role */
   return <Outlet />;
 };
 

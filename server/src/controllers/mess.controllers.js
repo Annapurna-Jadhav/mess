@@ -9,6 +9,7 @@ export const applyMessManager = async (req, res) => {
       email,
       messName,
       campusType,
+       foodType,
 
       prices,
       penaltyPercent,
@@ -95,6 +96,7 @@ export const applyMessManager = async (req, res) => {
       email,
       messName,
       campusType,
+        foodType,
 
       prices: {
         breakfast: Number(prices.breakfast),

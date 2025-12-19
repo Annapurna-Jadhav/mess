@@ -89,7 +89,7 @@ export default function Login() {
                   autoComplete={
                     mode === "login" ? "current-password" : "new-password"
                   }
-                  placeholder="••••••••"
+                  placeholder="......"
                   className="pl-9 pr-10 h-11 focus-visible:ring-[#6770d2]"
                   {...register("password")}
                 />
