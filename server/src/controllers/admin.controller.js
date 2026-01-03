@@ -1,4 +1,4 @@
-// controllers/admin.controller.js
+
 import db from "../config/firestore.js";
 import admin from "../config/firebase.js";
 import { sendApprovalEmail, sendRejectionEmail } from "../services/emailServices.js";
@@ -6,12 +6,12 @@ import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
 
-// controllers/admin.controller.js
+
 
 export const getPendingApps = asyncHandler(async (req, res) => {
   const snap = await db
     .collection("mess_applications")
-    .where("status", "==", "PENDING_HOSTEL_APPROVAL")
+    .where("status", "==", "PENDING")
     .get();
 
   const applications = snap.docs.map((doc) => {
@@ -41,6 +41,7 @@ export const approveMessApp = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const note = req.body.note || "Approved by hostel office";
 
+  /* ---------- FETCH APPLICATION ---------- */
   const ref = db.collection("mess_applications").doc(id);
   const snap = await ref.get();
 
@@ -50,52 +51,96 @@ export const approveMessApp = asyncHandler(async (req, res) => {
 
   const data = snap.data();
 
-  // 🔐 Create auth user (idempotent)
-  let tempPassword = null;
+  /* ---------- DEMO AUTH CREDENTIALS ---------- */
+  const baseName = data.messName.toLowerCase().replace(/\s+/g, "");
+  const demoEmail = `${baseName}@nitk.edu.in`;
+  const demoPassword = `${baseName}@123`; // ✅ >= 6 chars (DEMO ONLY)
+
+  let authUid;
+
   try {
-    tempPassword = Math.random().toString(36).slice(-8);
-    await admin.auth().createUser({
-      email: data.email,
-      password: tempPassword,
+    const userRecord = await admin.auth().createUser({
+      email: demoEmail,
+      password: demoPassword,
     });
+    authUid = userRecord.uid;
   } catch (err) {
-    if (err.code !== "auth/email-already-exists") {
+    if (err.code === "auth/email-already-exists") {
+      const existingUser = await admin.auth().getUserByEmail(demoEmail);
+      authUid = existingUser.uid;
+    } else {
       throw err;
     }
   }
 
-  // 📦 Promote to active mess
+  /* ---------- CREATE ACTIVE MESS (FULL COPY) ---------- */
   const messRef = await db.collection("messes").add({
-    ...data,
+    /* 🔹 Core Identity */
+    messName: data.messName,
+    campusType: data.campusType,
+    foodType: data.foodType,
+
+    /* 🔹 Financials */
+    prices: data.prices,
+    penaltyPercent: data.penaltyPercent,
+    estimatedCredits: data.estimatedCredits,
+
+    /* 🔹 Grand Dinner Rules */
+    grandDinner: data.grandDinner,
+
+    /* 🔹 Operation Period */
+    operation: data.operation,
+
+    /* 🔹 Status & Metadata */
+    status: "ACTIVE",
     isActive: true,
     createdFromApplicationId: id,
+
+    /* 🔹 Demo Auth (Hackathon Only) */
+    messAuth: {
+      uid: authUid,
+      email: demoEmail,
+      password: demoPassword, // ⚠️ DEMO ONLY
+    },
+
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
   });
 
+  /* ---------- UPDATE APPLICATION ---------- */
   await ref.update({
     status: "APPROVED",
     messId: messRef.id,
     approvedAt: admin.firestore.FieldValue.serverTimestamp(),
     approvalNote: note,
+    demoCredentials: {
+      email: demoEmail,
+      password: demoPassword,
+    },
   });
 
-  // 📧 Email (non-blocking)
+  /* ---------- OPTIONAL EMAIL ---------- */
   try {
-    await sendApprovalEmail(data.email, tempPassword, note);
+    await sendApprovalEmail(demoEmail, demoPassword, note);
   } catch (err) {
     console.error("⚠️ Approval email failed:", err.message);
   }
 
+  /* ---------- RESPONSE ---------- */
   return res.status(200).json(
     new ApiResponse({
       statusCode: 200,
-      message: "Mess application approved",
+      message: "Mess application approved and activated",
       data: {
         messId: messRef.id,
+        demoLogin: {
+          email: demoEmail,
+          password: demoPassword,
+        },
       },
     })
   );
 });
+
 
 
 export const rejectMessApp = asyncHandler(async (req, res) => {
@@ -117,7 +162,7 @@ export const rejectMessApp = asyncHandler(async (req, res) => {
     rejectionNote: note,
   });
 
-  // 📧 Email (non-blocking)
+ 
   try {
     await sendRejectionEmail(email, note);
   } catch (err) {
@@ -133,7 +178,10 @@ export const rejectMessApp = asyncHandler(async (req, res) => {
 });
 
 export const getApprovedMesses = asyncHandler(async (req, res) => {
-  const snap = await db.collection("messes").get();
+  const snap = await db
+    .collection("messes")
+    .where("isActive", "==", true) 
+    .get();
 
   const messes = snap.docs.map((doc) => ({
     id: doc.id,

@@ -19,22 +19,20 @@ import {
   Loader2,
 } from "lucide-react";
 
-/* ================= TYPES ================= */
 
 interface VerifyReceiptModalProps {
-  onSuccess?: () => void; // close modal / refresh dashboard
+  onSuccess?: () => void; 
 }
 
-/* ================= COMPONENT ================= */
+
 
 const VerifyReceiptModal = ({ onSuccess }: VerifyReceiptModalProps) => {
-  // ✅ hooks always at top
+ 
   const [file, setFile] = useState<File | null>(null);
   const [qrDetected, setQrDetected] = useState(false);
   const [qrError, setQrError] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(false);
 
-  /* ---------- Local QR scan (UX only) ---------- */
   const scanQRFromImage = async (file: File): Promise<boolean> => {
     const bitmap = await createImageBitmap(file);
     const canvas = document.createElement("canvas");
@@ -50,7 +48,6 @@ const VerifyReceiptModal = ({ onSuccess }: VerifyReceiptModalProps) => {
     return Boolean(jsQR(imageData.data, canvas.width, canvas.height));
   };
 
-  /* ---------- File select ---------- */
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -95,7 +92,7 @@ const VerifyReceiptModal = ({ onSuccess }: VerifyReceiptModalProps) => {
     }
   };
 
-  /* ================= UI ================= */
+
 
   return (
     <Card

@@ -72,13 +72,12 @@ export default function SelectMessModal({ open, onClose }: Props) {
       .finally(() => setLoadingMesses(false));
   }, [open]);
 
-  /* ---------- SELECT HANDLER ---------- */
   const handleSelect = async (messId: string) => {
     try {
       setSelectingId(messId);
       await selectMess(messId);
       toast.success("Mess selected successfully");
-      onClose(); // ✅ SUCCESS HANDLED HERE
+      onClose();
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "Selection failed");
     } finally {
@@ -146,21 +145,23 @@ export default function SelectMessModal({ open, onClose }: Props) {
 >
   <CardContent className="px-6 py-4 text-sm">
 
-    {/* ================= HEADER ================= */}
+   
     <div className="flex items-center justify-between">
       <div>
         <h3 className="text-lg font-semibold group-hover:text-[#6770d2] transition">
           {mess.messName}
         </h3>
-        <p className="text-xs text-muted-foreground">
-          {mess.operation.startDate} → {mess.operation.endDate}
-        </p>
+       <p className="text-xs text-muted-foreground">
+  {mess.operation
+    ? `${mess.operation.startDate} → ${mess.operation.endDate}`
+    : "Operation dates not set"}
+</p>
+
       </div>
 
       <Badge variant="outline">{mess.campusType}</Badge>
     </div>
 
-    {/* ================= MEALS ================= */}
     <div className="mt-4 grid grid-cols-5 gap-3 text-xs text-center">
 
       <Meal label="Breakfast" price={mess.prices.breakfast} />
@@ -171,7 +172,7 @@ export default function SelectMessModal({ open, onClose }: Props) {
 
     </div>
 
-    {/* ================= META ================= */}
+   
     <div className="mt-4 flex items-center justify-between">
 
       <div className="flex gap-6 text-xs">
@@ -201,7 +202,6 @@ export default function SelectMessModal({ open, onClose }: Props) {
       </Button>
     </div>
 
-    {/* ================= WARNING ================= */}
     {insufficientCredits && (
       <div className="mt-3 text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-1.5">
         Insufficient credits

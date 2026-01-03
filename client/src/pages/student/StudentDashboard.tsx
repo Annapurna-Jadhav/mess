@@ -9,8 +9,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
-import VerifyReceiptModal from "@/components/VerifyReceiptModal";
-import SelectMessModal from "@/components/SelectMessModal";
+import VerifyReceiptModal from "@/components/student/VerifyReceiptModal";
+import SelectMessModal from "@/components/student/SelectMessModal";
 
 import {
   CheckCircle2,
@@ -267,7 +267,7 @@ const StudentDashboard = () => {
         </div>
       </div>
 
-      {/* ================= MODALS ================= */}
+      
       <Dialog open={showReceiptModal} onOpenChange={setShowReceiptModal}>
         <DialogContent className="p-0 bg-transparent border-none">
           <VerifyReceiptModal

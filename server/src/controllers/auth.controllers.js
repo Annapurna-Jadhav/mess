@@ -17,17 +17,17 @@ const parseStudent = (emailPrefix) => {
     role: "student",
   };
 };
- const parseMessManager = (emailPrefix) => {
-  const match = emailPrefix.match(/^([a-zA-Z]+)\.(\d+)$/);
+ function parseMessManager(email) {
+  const local = email.split("@")[0]; // mess6
+  const match = local.match(/^mess(\d+)$/i);
+
   if (!match) return null;
 
   return {
-    name: match[1],
-    messRoll: match[2],
-    role: "mess_manager",
+    messKey: local.toLowerCase(),      // mess6
+    displayName: `Mess ${match[1]}`,   // Mess 6
   };
-};
-
+}
 
 
 export const continueAuth = asyncHandler(async (req, res) => {
@@ -69,48 +69,75 @@ const ADMIN_EMAIL=process.env.ADMIN_EMAIL;
   }
 
   // ---------- MESS MANAGEMENT ----------
-  const mess = parseMessManager(emailPrefix);
-  if (mess) {
-    const approvalRef = db
-      .collection("mess_manager_approvals")
-      .doc(email);
+const mess = parseMessManager(emailPrefix);
 
-    const approvalSnap = await approvalRef.get();
+if (mess) {
+  /* ---------- FIND APPROVED / ACTIVE MESS ---------- */
+  const messSnap = await db
+    .collection("messes")
+    .where("messAuth.email", "==", email)
+    .where("isActive", "==", true)
+    .limit(1)
+    .get();
 
-    if (!approvalSnap.exists || approvalSnap.data().status !== "approved") {
-      throw new ApiError(403, "Mess manager not approved by admin");
-    }
-
-    const ref = db.collection("mess_managers").doc(uid);
-
-    await ref.set(
-      {
-        uid,
-        email,
-        name: mess.name,
-        messRoll: mess.messRoll,
-        role: "mess_manager",
-        lastLoginAt: admin.firestore.FieldValue.serverTimestamp(),
-      },
-      { merge: true }
-    );
-
-    return res.status(200).json(
-      new ApiResponse({
-        statusCode: 200,
-        message: "Mess management authentication successful",
-        data: {
-          uid,
-          email,
-          role: "mess_manager",
-          messRoll: mess.messRoll,
-        },
-      })
-    );
+  if (messSnap.empty) {
+    throw new ApiError(403, "Mess manager not approved by admin");
   }
 
+  const messDoc = messSnap.docs[0];
+  const messData = messDoc.data();
+
+  /* ---------- UPSERT MESS MANAGER PROFILE ---------- */
+  const ref = db.collection("mess_managers").doc(uid);
+
+  await ref.set(
+    {
+      uid,
+      email,
+      role: "mess_manager",
+
+      /* 🔹 BASIC IDENTITY */
+      messId: messDoc.id,
+      messName: messData.messName,
+      campusType: messData.campusType,
+
+      /* 🔹 CONTROL DATA (READ-ONLY FOR MANAGER) */
+      foodType: messData.foodType,
+      prices: messData.prices,
+      penaltyPercent: messData.penaltyPercent,
+      operation: messData.operation,
+
+      /* 🔹 STATS */
+      studentCount: messData.studentCount ?? 0,
+
+      lastLoginAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt:
+        messData.createdAt ??
+        admin.firestore.FieldValue.serverTimestamp(),
+    },
+    { merge: true }
+  );
+
+  /* ---------- RESPONSE ---------- */
+  return res.status(200).json(
+    new ApiResponse({
+      statusCode: 200,
+      message: "Mess management authentication successful",
+      data: {
+        uid,
+        email,
+        role: "mess_manager",
+        messId: messDoc.id,
+        messName: messData.messName,
+        campusType: messData.campusType,
+      },
+    })
+  );
+}
+
+
   // ---------- STUDENT ----------
-  const student = parseStudent(emailPrefix);
+  const student = parseStudent(email);
   if (!student) {
     throw new ApiError(403, "Invalid institute email format");
   }
@@ -142,4 +169,6 @@ const ADMIN_EMAIL=process.env.ADMIN_EMAIL;
     })
   );
 });
+
+
 

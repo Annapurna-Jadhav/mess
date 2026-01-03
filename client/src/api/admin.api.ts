@@ -31,5 +31,6 @@ export const rejectMess = async (
 
 export const getApprovedMesses = async () => {
   const res = await axiosClient.get("/admin/messes");
+  
   return res.data;
 };

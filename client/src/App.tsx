@@ -6,7 +6,7 @@ import { Toaster } from "react-hot-toast";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import ApplyMessManager from "./pages/mess/ApplyMessManager";
+import ApplyMessManager from "./pages/mess-manager/ApplyMessManager";
 
 import AdminRoutes from "./routes/AdminRoutes";
 import MessRoutes from "./routes/MessRoutes";

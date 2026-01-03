@@ -11,10 +11,10 @@ const roleRedirectMap: Record<UserRole, string> = {
 };
 
 interface ProtectedRouteProps {
-  role: UserRole; // 👈 REQUIRED, not optional
+  role: UserRole; 
 }
 
-/* ================= COMPONENT ================= */
+
 
 const ProtectedRoute = ({ role }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();

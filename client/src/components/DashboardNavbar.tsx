@@ -4,8 +4,11 @@ import {
   LayoutDashboard,
   ClipboardCheck,
   CheckCircle2,
+  MenuIcon,
   Sun,
   Moon,
+  ScanQrCodeIcon,
+
   LogOut,
 } from "lucide-react";
 
@@ -32,6 +35,11 @@ const roleDashboardNav: Record<Role, NavItem[]> = {
       to: "/student/dashboard",
       icon: LayoutDashboard,
     },
+    {
+      label:"Declare-Absent",
+      to:"/student/Declare-Absent",
+      icon:MenuIcon,
+    }
   ],
 
   mess_manager: [
@@ -40,6 +48,11 @@ const roleDashboardNav: Record<Role, NavItem[]> = {
       to: "/mess/dashboard",
       icon: LayoutDashboard,
     },
+    {
+      label:"scanQR",
+      to:"/Mess/scanQR",
+      icon:ScanQrCodeIcon,
+    }
   ],
 
   hostel_office: [

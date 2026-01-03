@@ -49,10 +49,12 @@ export default function ApprovedMesses() {
   const [selectedMess, setSelectedMess] = useState<Mess | null>(null);
 
   useEffect(() => {
-    getApprovedMesses().then((res) => {
-      setMesses(res.data?.messes ?? res.data ?? []);
-    });
-  }, []);
+  getApprovedMesses()
+    .then((res) => {
+      setMesses(res.data?.messes ?? []);
+    })
+    .catch(() => setMesses([]));
+}, []);
 
   return (
     <div className="p-6 space-y-6">
@@ -140,9 +142,11 @@ export default function ApprovedMesses() {
 
               {/* INFO */}
               <div className="space-y-1 text-muted-foreground">
-                <p className="text-xs">
-                  {mess.operation.startDate} → {mess.operation.endDate}
-                </p>
+               <p className="text-xs">
+  {mess.operation?.startDate ?? "N/A"} →{" "}
+  {mess.operation?.endDate ?? "N/A"}
+</p>
+
                 <p className="font-medium text-[#6770d2]">
                   Estimated Credits: ₹{mess.estimatedCredits ?? 0}
                 </p>
@@ -222,10 +226,12 @@ export default function ApprovedMesses() {
 
               {/* META */}
               <div className="text-sm space-y-1">
-                <p>
-                  Validity: {selectedMess.operation.startDate} →{" "}
-                  {selectedMess.operation.endDate}
-                </p>
+              <p>
+  Validity:{" "}
+  {selectedMess.operation?.startDate ?? "N/A"} →{" "}
+  {selectedMess.operation?.endDate ?? "N/A"}
+</p>
+
                 <p>
                   Students Enrolled: {selectedMess.studentCount ?? 0}
                 </p>

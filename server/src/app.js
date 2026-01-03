@@ -38,12 +38,14 @@ import authRoutes from "./routes/auth.routes.js";
 import studentRoutes from "./routes/student.routes.js";
 import messRoutes from "./routes/mess.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import qrRoutes from "./routes/qr.routes.js";
 
-app.use("/api/v1/mess", messRoutes);
+app.use("/api/v1/mess-manager", messRoutes);
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/student", studentRoutes);
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/qr", qrRoutes);
 
 
 

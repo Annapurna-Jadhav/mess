@@ -45,3 +45,24 @@ export const getMyStudentProfile = async () => {
 export const selectMess = (messId: string) => {
   return axiosClient.post("/student/select-mess", { messId });
 };
+
+
+export const getStudentMealDays = async () => {
+  const res = await axiosClient.get("/student/meal-days");
+
+  console.log("🟢 API RESPONSE:", res.data);
+
+  
+  return res.data.data.days; 
+};
+
+
+export const declareAbsent = async (
+  date: string,
+  mealType: string
+) => {
+  return axiosClient.post("/student/declare-absent", {
+    date,
+    mealType,
+  });
+};

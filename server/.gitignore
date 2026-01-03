@@ -26,3 +26,5 @@ build/
 # Cloud Run / Docker
 *.env.production
 *.env.local
+
+*scripts
