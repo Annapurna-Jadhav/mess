@@ -18,10 +18,10 @@ export interface ApiResponse<T = any> {
 
 const axiosClient: AxiosInstance = axios.create({
   baseURL: API_URL,
-  // ❌ DO NOT force Content-Type globally
+  
 });
 
-// 🔐 Attach Firebase ID Token
+
 axiosClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getAccessToken();
@@ -33,7 +33,6 @@ axiosClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 🔁 Error handling ONLY (no success toasts here)
 axiosClient.interceptors.response.use(
   (response: AxiosResponse<ApiResponse>) => {
     return response;

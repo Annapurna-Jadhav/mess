@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import { Label } from "recharts";
 import {
   LineChart,
   Line,
@@ -21,35 +22,77 @@ const MEAL_STYLES: Record<string, string> = {
   snacks: "2 2",
   dinner: "8 4",
 };
+function formatValue(value: number, mode: "count" | "revenue" | "peakHours") {
+  if (mode === "count") return value.toString();
+
+  if (mode === "revenue") {
+    if (value >= 1e7) return `₹${(value / 1e7).toFixed(2)} Cr`;
+    if (value >= 1e5) return `₹${(value / 1e5).toFixed(2)} L`;
+    if (value >= 1e3) return `₹${(value / 1e3).toFixed(2)} K`;
+    return `₹${value}`;
+  }
+
+  return value.toString();
+}
+
 
 export default function AnalyticsChart({
   daily,
-  metrics, // array → ["served", "declaredAbsent"]
-  meals,   // array → ["breakfast", "lunch"] | null
+  metrics,
+  meals,
+  mode = "count", // count | revenue
 }: {
   daily: any[];
   metrics: string[];
   meals: string[] | null;
+  mode?: "count" | "revenue";
 }) {
+
   if (!daily?.length) return null;
 
-  /* ---------------- BUILD DATA ---------------- */
-  const chartData = daily.map((d) => {
-    const row: any = { date: d.date };
+  
+const chartData = daily.map((d) => {
+  const row: any = { date: d.date };
 
-    metrics.forEach((metric) => {
-      if (!meals || meals.length === 0) {
-        row[metric] = d.totals?.[metric] || 0;
-      } else {
-        meals.forEach((meal) => {
-          row[`${meal}_${metric}`] =
-            d.meals?.[meal]?.[metric] || 0;
-        });
-      }
-    });
+  metrics.forEach((metric) => {
+    
+    if (!meals || meals.length === 0) {
+      let total = 0;
 
-    return row;
+      Object.values(d.meals || {}).forEach((m: any) => {
+        total += Number(m?.[metric] || 0);
+      });
+
+      row[metric] = total;
+    }
+
+    
+    else {
+      meals.forEach((meal) => {
+        row[`${meal}_${metric}`] =
+          Number(d.meals?.[meal]?.[metric] || 0);
+      });
+    }
   });
+
+  return row;
+});
+const maxY = Math.max(
+  ...chartData.flatMap((row) =>
+    Object.keys(row)
+      .filter((k) => k !== "date")
+      .map((k) => Number(row[k] || 0))
+  ),
+  0
+);
+const maxTicks = 12;
+
+const xAxisInterval =
+  daily.length <= maxTicks
+    ? 0
+    : Math.ceil(daily.length / maxTicks) - 1;
+
+
   const formatDayDate = (dateStr: string) => {
   const d = new Date(dateStr);
 
@@ -104,37 +147,76 @@ export default function AnalyticsChart({
   return (
     <div className="rounded-2xl border bg-card p-4">
       <h3 className="font-semibold mb-3 text-sm text-muted-foreground">
-        Attendance Trends
-      </h3>
+  {mode === "revenue"
+    ? "Revenue Trends"
+    : "Attendance Trends"}
+</h3>
+
 <div className="text-black dark:text-white">
-     <ResponsiveContainer width="100%" height={340}>
-  <LineChart data={chartData}>
-   <XAxis
+     <ResponsiveContainer
+  key={mode}              
+  width="100%"
+  height={340}
+>
+  <LineChart
+  data={chartData}
+  margin={{ top: 16, right: 14, bottom: 12, left: 16 }} 
+>
+
+
+<XAxis
   dataKey="date"
   type="category"
   tickFormatter={formatDayDate}
+  interval={xAxisInterval}
+  padding={{ left:10, right: 20 }}
   tick={{
     fill: "currentColor",
     fontSize: 12,
     fontWeight: 600,
   }}
-  width={80}
 />
 
+
+
 <YAxis
+  domain={
+    mode === "revenue"
+      ? [0, Math.ceil(maxY * 1.15)] 
+      : [0, "auto"]
+  }
+  tickFormatter={(v) => formatValue(Number(v), mode)}
   tick={{
     fill: "currentColor",
     fontSize: 12,
   }}
+>
+  <Label
+    value={mode === "revenue" ? "Revenue (₹)" : "Students"}
+    angle={-90}
+    position="insideLeft"
+    offset={0}
+    style={{ textAnchor: "middle", fill: "currentColor" }}
+  />
+</YAxis>
+
+
+
+
+
+  <Tooltip
+  content={(props) => (
+    <CustomTooltip
+      {...props}
+      mode={mode}
+    />
+  )}
+   wrapperStyle={{
+    zIndex: 9999,             
+    pointerEvents: "none",     
+  }}
 />
 
-
-
-
-    <Tooltip
-      content={<CustomTooltip />}
-      wrapperStyle={{ zIndex: 50 }}
-    />
 
     <Legend
       wrapperStyle={{
@@ -152,10 +234,27 @@ export default function AnalyticsChart({
   );
 }
 
-function CustomTooltip({ active, payload, label }: any) {
-  if (!active || !payload?.length) return null;
+type TooltipProps = {
+  active?: boolean;
+  payload?: readonly any[]; // ✅ FIX
+  label?: string|number;
+  mode: "count" | "revenue" | "peakHours";
+};
 
-  const date = new Date(label).toLocaleDateString("en-US", {
+function CustomTooltip({
+  active,
+  payload,
+  label,
+  mode,
+}: TooltipProps): JSX.Element | null {
+  if (!active || !payload?.length || label == null) return null;
+
+  const date =
+    typeof label === "string"
+      ? new Date(label)
+      : new Date(String(label));
+
+  const formattedDate = date.toLocaleDateString("en-US", {
     weekday: "long",
     day: "numeric",
     month: "short",
@@ -170,12 +269,8 @@ function CustomTooltip({ active, payload, label }: any) {
         shadow-2xl
         text-sm
       "
-      style={{
-        borderColor: "hsl(var(--border))",
-        color: "hsl(var(--foreground))",
-      }}
     >
-      <p className="mb-2 font-semibold">{date}</p>
+      <p className="mb-2 font-semibold">{formattedDate}</p>
 
       <div className="space-y-1">
         {payload.map((p: any) => (
@@ -189,8 +284,9 @@ function CustomTooltip({ active, payload, label }: any) {
             >
               {p.name}
             </span>
+
             <span className="font-medium">
-              {p.value}
+              {formatValue(Number(p.value), mode)}
             </span>
           </div>
         ))}
@@ -198,4 +294,3 @@ function CustomTooltip({ active, payload, label }: any) {
     </div>
   );
 }
-

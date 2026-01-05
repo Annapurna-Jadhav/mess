@@ -7,12 +7,17 @@ import { VertexAI } from "@google-cloud/vertexai";
 
 
 const MEALS = ["breakfast", "lunch", "snacks", "dinner"];
+console.log("✅ Mess analytics route file loaded");
 
 
 
 export const getMessAnalytics = asyncHandler(async (req, res) => {
   const { uid } = req.user;
-  const { fromDate, toDate } = req.query;
+  const {
+    fromDate,
+    toDate,
+    mode = "count", 
+  } = req.query;
 
   const messSnap = await db
     .collection("messes")
@@ -25,9 +30,18 @@ export const getMessAnalytics = asyncHandler(async (req, res) => {
     throw new ApiError(403, "Mess not found");
   }
 
-  const messId = messSnap.docs[0].id;
+  const messDoc = messSnap.docs[0];
+  const messId = messDoc.id;
+  const mess = messDoc.data();
 
-  const end = toDate || new Date(Date.now() - 86400000).toISOString().split("T")[0];
+  const prices = mess.prices || {};
+  const penaltyPercent = mess.operation?.penaltyPercent ?? 75;
+
+ 
+  const end =
+    toDate ||
+    new Date(Date.now() - 86400000).toISOString().split("T")[0];
+
   const start =
     fromDate ||
     new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
@@ -41,27 +55,113 @@ export const getMessAnalytics = asyncHandler(async (req, res) => {
     .orderBy("date", "asc")
     .get();
 
-    const totals = {
+ 
+ if (mode === "peakHours") {
+  const peakByMeal = [];
+  const totals = {
     served: 0,
     declaredAbsent: 0,
     noShow: 0,
-    foodWaste: 0,
   };
 
-  const daily = snap.docs.map(d => {
-    const data = d.data();
+  for (const doc of snap.docs) {
+    const d = doc.data();
 
-    if (data.totals) {
-      totals.served += data.totals.served || 0;
-      totals.declaredAbsent += data.totals.declaredAbsent || 0;
-      totals.noShow += data.totals.noShow || 0;
+    const day = {
+      date: d.date,
+      meals: {}, // 👈 explicit
+    };
+
+    for (const [meal, m] of Object.entries(d.meals || {})) {
+      /* ---------- PEAK BUCKET ---------- */
+      if (m.peakBucket) {
+        day.meals[meal] = m.peakBucket;
+      }
+
+      /* ---------- TOTAL COUNTS ---------- */
+      totals.served += m.served || 0;
+      totals.declaredAbsent += m.declaredAbsent || 0;
+      totals.noShow += m.noShow || 0;
     }
 
-    return data;
-  });
+    peakByMeal.push(day);
+  }
 
-  totals.foodWaste =
-    totals.noShow;
+  return res.json(
+    new ApiResponse({
+      statusCode: 200,
+      message: "Peak hours analytics",
+      data: {
+        range: { start, end },
+        mode,
+        unit: "time",
+        peakByMeal,   
+        totals,      
+      },
+    })
+  );
+}
+
+ 
+  const daily = [];
+  const totals = {
+    served: 0,
+    declaredAbsent: 0,
+    noShow: 0,
+  };
+
+  const unit = mode === "count" ? "students" : "rupees";
+
+  for (const doc of snap.docs) {
+    const d = doc.data();
+
+    const day = {
+      date: d.date,
+      meals: {},
+      totals: {
+        served: 0,
+        declaredAbsent: 0,
+        noShow: 0,
+      },
+    };
+
+    for (const [meal, m] of Object.entries(d.meals || {})) {
+      if (mode === "count") {
+        const served = m.served || 0;
+        const absent = m.declaredAbsent || 0;
+        const noShow = m.noShow || 0;
+
+        day.meals[meal] = { served, declaredAbsent: absent, noShow };
+
+        day.totals.served += served;
+        day.totals.declaredAbsent += absent;
+        day.totals.noShow += noShow;
+      }
+
+      if (mode === "revenue") {
+        const price = prices[meal] || 0;
+
+        const servedRevenue = (m.served || 0) * price;
+        const noShowRevenue =
+          (m.noShow || 0) * price * (penaltyPercent / 100);
+
+        day.meals[meal] = {
+          served: servedRevenue,
+          declaredAbsent: 0,
+          noShow: noShowRevenue,
+        };
+
+        day.totals.served += servedRevenue;
+        day.totals.noShow += noShowRevenue;
+      }
+    }
+
+    totals.served += day.totals.served;
+    totals.declaredAbsent += day.totals.declaredAbsent;
+    totals.noShow += day.totals.noShow;
+
+    daily.push(day);
+  }
 
   return res.json(
     new ApiResponse({
@@ -69,8 +169,10 @@ export const getMessAnalytics = asyncHandler(async (req, res) => {
       message: "Analytics data fetched",
       data: {
         range: { start, end },
+        mode,
+        unit,
         daily,
-        totals
+        totals,
       },
     })
   );

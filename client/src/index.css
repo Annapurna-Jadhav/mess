@@ -10,6 +10,33 @@
     transform: rotate(360deg);
   }
 }
+@keyframes flow {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes flow {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.animate-flow {
+  animation: flow 1.6s ease-in-out infinite;
+}
+
+
 
 .animate-orbit {
   animation: orbit 28s linear infinite;
