@@ -20,7 +20,6 @@ const authMiddleware = async (req, res, next) => {
       });
     }
 
-    // ✅ ONLY IDENTITY (centralized)
     req.user = {
       uid: decoded.uid,
       email,

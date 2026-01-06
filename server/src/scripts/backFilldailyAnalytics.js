@@ -109,7 +109,6 @@ export const backfillDailyAnalytics = async () => {
     }
   }
 
-  /* --------- WRITE TO FIRESTORE --------- */
   for (const key of Object.keys(agg)) {
     const d = agg[key];
 
@@ -124,7 +123,6 @@ export const backfillDailyAnalytics = async () => {
   console.log("✅ Daily analytics backfill completed");
 };
 
-/* --------- RUN --------- */
 backfillDailyAnalytics()
   .then(() => process.exit(0))
   .catch((err) => {

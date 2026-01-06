@@ -58,7 +58,7 @@ export const seedMessStatsFromStudentMealDays = async () => {
 
       const price = agg.prices[mealType] || 0;
 
-      /* -------- COUNTS -------- */
+  
       if (status === "SERVED") agg.total.served++;
       if (status === "DECLARED_ABSENT") agg.total.declaredAbsent++;
       if (status === "NO_SHOW") agg.total.noShow++;
@@ -69,7 +69,7 @@ export const seedMessStatsFromStudentMealDays = async () => {
         if (status === "NO_SHOW") agg.today.noShow++;
       }
 
-      /* -------- REVENUE -------- */
+  
       let revenue = 0;
 
       if (status === "SERVED") {
@@ -91,7 +91,6 @@ export const seedMessStatsFromStudentMealDays = async () => {
     }
   }
 
-  /* -------- WRITE TO MESS DOC -------- */
   for (const messId of Object.keys(messAgg)) {
     const agg = messAgg[messId];
 

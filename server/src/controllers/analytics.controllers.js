@@ -7,7 +7,7 @@ import { VertexAI } from "@google-cloud/vertexai";
 
 
 const MEALS = ["breakfast", "lunch", "snacks", "dinner"];
-console.log("✅ Mess analytics route file loaded");
+
 
 
 
@@ -400,13 +400,13 @@ export const askMessAnalyticsAI = asyncHandler(async (req, res) => {
     q.includes("expected") ||
     q.includes("will") ||
     q.match(/\bjan\b|\bfeb\b|\bmar\b|\bapr\b/);
-
-  const vertexAI = new VertexAI({
+const vertexAI = new VertexAI({
     project: process.env.GCP_PROJECT_ID,
     location: "us-central1",
   });
 
-  const model = vertexAI.getGenerativeModel({
+ 
+   const model = vertexAI.getGenerativeModel({
     model: "gemini-2.5-pro",
   });
 
@@ -471,7 +471,7 @@ DEPTH CONTROL (VERY IMPORTANT):
 Now generate a clear, confident, human-friendly response that is easy to read and act on.
 `;
 
-  /* 5️⃣ Generate response */
+
   const result = await model.generateContent({
     contents: [{ role: "user", parts: [{ text: prompt }] }],
   });
@@ -499,3 +499,128 @@ Now generate a clear, confident, human-friendly response that is easy to read an
 
 
 
+
+export const getStudentAnalytics = asyncHandler(async (req, res) => {
+  const uid = req.user?.uid;
+  if (!uid) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  const mode = req.query.mode === "revenue" ? "revenue" : "meals";
+  const from = req.query.from;
+  const to = req.query.to;
+
+  const analyticsRef = db
+    .collection("students")
+    .doc(uid)
+    .collection("daily_analytics");
+
+  let query;
+  if (from && to) {
+    query = analyticsRef
+      .where("date", ">=", from)
+      .where("date", "<=", to)
+      .orderBy("date", "asc");
+  } else {
+    query = analyticsRef.orderBy("date", "desc").limit(30);
+  }
+
+  const snap = await query.get();
+
+  /* ---------- EMPTY ---------- */
+  if (snap.empty) {
+    return res.status(200).json(
+      new ApiResponse({
+        statusCode: 200,
+        message: "Success",
+        data: {
+          summary: {
+            totalDays: 0,
+            totalServed: 0,
+            totalDeclaredAbsent: 0,
+            totalNoShow: 0,
+            totalMessSpent: 0,
+            totalWalletCredit: 0,
+            totalFoodCourtSpent: 0,
+            netWalletChange: 0,
+          },
+          chart: [],
+          daily: [],
+        },
+      })
+    );
+  }
+
+  /* ---------- AGGREGATION ---------- */
+  const totals = {
+    totalServed: 0,
+    totalDeclaredAbsent: 0,
+    totalNoShow: 0,
+    totalMessSpent: 0,
+    totalWalletCredit: 0,
+    totalFoodCourtSpent: 0,
+  };
+
+  const chart = [];
+  const daily = [];
+
+  const docs = from && to ? snap.docs : snap.docs.reverse();
+
+  for (const doc of docs) {
+    const d = doc.data();
+
+    let served = 0;
+    let declaredAbsent = 0;
+    let noShow = 0;
+
+    for (const meal of Object.values(d.meals || {})) {
+      if (meal.status === "SERVED") served++;
+      else if (meal.status === "DECLARED_ABSENT") declaredAbsent++;
+      else if (meal.status === "NO_SHOW") noShow++;
+    }
+
+    totals.totalServed += served;
+    totals.totalDeclaredAbsent += declaredAbsent;
+    totals.totalNoShow += noShow;
+
+    totals.totalMessSpent += d.messSpent || 0;
+    totals.totalWalletCredit += d.walletCredit || 0;
+    totals.totalFoodCourtSpent += d.foodCourtSpent || 0;
+
+    if (mode === "meals") {
+      chart.push({ date: d.date, served, declaredAbsent, noShow });
+    } else {
+      chart.push({
+        date: d.date,
+        messSpent: d.messSpent || 0,
+        walletCredit: d.walletCredit || 0,
+        foodCourtSpent: d.foodCourtSpent || 0,
+      });
+    }
+
+    daily.push({
+      date: d.date,
+      meals: d.meals || {},
+      messSpent: d.messSpent || 0,
+      walletCredit: d.walletCredit || 0,
+      foodCourtSpent: d.foodCourtSpent || 0,
+    });
+  }
+
+  return res.status(200).json(
+    new ApiResponse({
+      statusCode: 200,
+      message: "Success",
+      data: {
+        summary: {
+          totalDays: chart.length,
+          ...totals,
+          netWalletChange:
+            totals.totalWalletCredit - totals.totalFoodCourtSpent,
+        },
+        chart,
+        daily,
+      },
+    })
+  );
+});

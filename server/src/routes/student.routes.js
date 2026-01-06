@@ -5,13 +5,15 @@ import {
   verifyReceipt,
   getStudentProfile,
   declareAbsent,
-  getStudentMealDays,
-  getStudentMealHistory,
+   selectMess ,getStudentMealDays,getStudentMealHistory
+  
 
 } from "../controllers/student.controllers.js";
 import { upload } from "../middleware/upload.middleware.js";
-import { selectMess } from "../controllers/student.controllers.js"
+
 import { generateMealQR } from "../controllers/qr.controllers.js";
+import { getStudentAnalytics } from "../controllers/analytics.controllers.js";
+import { getMyFeedbacks, submitFeedback } from "../controllers/feedback.controllers.js";
 router.post(
   "/verify",
   authMiddleware,
@@ -24,11 +26,12 @@ router.post("/select-mess", authMiddleware, selectMess);
 
 router.post("/declare-absent", authMiddleware, declareAbsent);
 
+router.post("/submitFeedback",authMiddleware,submitFeedback);
+router.get("/myFeedbacks",authMiddleware,getMyFeedbacks);
+router.post("/generateMealQR", authMiddleware, generateMealQR);
+router.get("/analytics",authMiddleware,getStudentAnalytics)
 router.get("/meal-days", authMiddleware, getStudentMealDays);
-
 router.get("/meal-history", authMiddleware, getStudentMealHistory);
 
-
-router.post("/generateMealQR", authMiddleware, generateMealQR);
 
 export default router;

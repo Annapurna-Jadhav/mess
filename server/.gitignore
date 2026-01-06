@@ -27,4 +27,4 @@ build/
 *.env.production
 *.env.local
 
-# *scripts
+*scripts

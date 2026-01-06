@@ -11,6 +11,8 @@ import {
 
   LogOut,
   GitGraphIcon,
+  GitGraph,
+  MessageCircle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -40,6 +42,16 @@ const roleDashboardNav: Record<Role, NavItem[]> = {
       label:"Declare-Absent",
       to:"/student/Declare-Absent",
       icon:MenuIcon,
+    },
+    {
+      label:"Analytics",
+      to:"/student/analytics",
+      icon:GitGraph
+    },
+    {
+      label:"Feedbacks",
+      to:"/student/submitFeedbacks",
+      icon:MessageCircle
     }
   ],
 
@@ -58,6 +70,11 @@ const roleDashboardNav: Record<Role, NavItem[]> = {
       label:"analytics",
       to:"/Mess/analytics",
       icon:GitGraphIcon
+    },
+    {
+      label:"feedbacks",
+      to:"/Mess/feedbacks",
+      icon:MessageCircle
     }
   ],
 

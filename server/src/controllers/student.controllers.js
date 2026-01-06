@@ -18,7 +18,7 @@ function isAbsentAllowed(mealTime, date) {
 
 
 export const verifyReceipt = asyncHandler(async (req, res) => {
-  /* ================= AUTH ================= */
+ 
   if (!req.user || !req.user.uid || !req.user.email) {
     throw new ApiError(401, "Unauthorized");
   }
@@ -29,7 +29,7 @@ export const verifyReceipt = asyncHandler(async (req, res) => {
 
   const { uid, email } = req.user;
 
-  /* ================= 1️⃣ SCAN & VERIFY QR ================= */
+
   const qrToken = await scanQRFromImage(req.file.buffer);
   const rawQrData = verifyQRToken(qrToken);
 
@@ -156,7 +156,8 @@ export const getStudentProfile = asyncHandler(async (req, res) => {
 
   const { uid } = req.user;
 
-  const snap = await db.collection("students").doc(uid).get();
+  const studentRef = db.collection("students").doc(uid);
+  const snap = await studentRef.get();
 
   if (!snap.exists) {
     return res.status(200).json(
@@ -173,6 +174,25 @@ export const getStudentProfile = asyncHandler(async (req, res) => {
     );
   }
 
+  const studentData = snap.data();
+
+  let selectedMess = studentData.selectedMess ?? null;
+
+  /* ---------- ADD ONLY studentCount ---------- */
+  if (selectedMess?.messId) {
+    const messSnap = await db
+      .collection("messes")
+      .doc(selectedMess.messId)
+      .get();
+
+    if (messSnap.exists) {
+      selectedMess = {
+        ...selectedMess,
+        studentCount: messSnap.data().studentCount ?? 0,
+      };
+    }
+  }
+
   return res.status(200).json(
     new ApiResponse({
       statusCode: 200,
@@ -180,13 +200,15 @@ export const getStudentProfile = asyncHandler(async (req, res) => {
       data: {
         role: "student",
         exists: true,
-        ...snap.data(),
-        messSelected: snap.data().messSelected ?? false,
-      selectedMess: snap.data().selectedMess ?? null,
+        ...studentData,
+        messSelected: studentData.messSelected ?? false,
+        selectedMess,
       },
     })
   );
 });
+
+
 
 
 export const selectMess = asyncHandler(async (req, res) => {

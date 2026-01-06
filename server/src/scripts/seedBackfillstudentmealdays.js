@@ -64,7 +64,6 @@ export const backfillFromStudentMealDays = async () => {
         hasBatchWrites = true;
       }
 
-      // 🧾 Aggregate mess revenue (applied later)
       if (!messRevenueAgg[messId]) messRevenueAgg[messId] = 0;
       messRevenueAgg[messId] += messRevenue;
 
@@ -84,7 +83,6 @@ export const backfillFromStudentMealDays = async () => {
     }
   }
 
-  /* 🔥 Apply mess revenue once per mess */
   for (const messId of Object.keys(messRevenueAgg)) {
     await db.collection("messes").doc(messId).update({
       totalRevenue: admin.firestore.FieldValue.increment(
@@ -95,7 +93,7 @@ export const backfillFromStudentMealDays = async () => {
 
   console.log("✅ SAFE BACKFILL COMPLETED (IDEMPOTENT)");
 };
-// 👇 RUN SCRIPT
+
 backfillFromStudentMealDays()
   .then(() => {
     console.log("🎯 Backfill script finished");

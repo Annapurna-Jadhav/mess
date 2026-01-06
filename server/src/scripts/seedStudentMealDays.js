@@ -1,7 +1,7 @@
 
 import admin from "../config/firebase.js";
 import db from "../config/firestore.js";
-/* ================= CONFIG ================= */
+
 
 const MESS_ID = "A1mUzvxiP3ol3QDMu7O1";
 
@@ -47,7 +47,7 @@ const MEAL_TIMES = {
 
 const STATUSES = ["SERVED", "DECLARED_ABSENT", "NONE"];
 
-/* ================= HELPERS ================= */
+
 
 function randomStatus() {
   return STATUSES[Math.floor(Math.random() * STATUSES.length)];
@@ -63,7 +63,6 @@ function dateRange(start, end) {
   return dates;
 }
 
-// 🔥 generate scannedAt inside 15-min bucket
 function randomScannedAt(dateStr, timeRange) {
   const [start, end] = timeRange.split("-");
   const [sh, sm] = start.split(":").map(Number);
@@ -91,7 +90,6 @@ function randomScannedAt(dateStr, timeRange) {
   return new Date(bucketStart.getTime() + offset);
 }
 
-/* ================= MAIN ================= */
 
 async function seedStudentMealDays() {
   const dates = dateRange(

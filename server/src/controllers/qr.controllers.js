@@ -27,7 +27,7 @@ function getMealExpiry(mealType, dateISO) {
   return new Date(year, month - 1, day, eh, em, 0);
 }
 
-// for testing purpose
+
 function isDinner(mealType) {
   return mealType === "dinner";
 }
@@ -296,7 +296,7 @@ export const scanMealEntry = asyncHandler(async (req, res) => {
         penaltyPercent,
         date,
         scannedAt: new Date(),
-        settlementApplied: true, // ✅ MATCHES DAY DOC
+        settlementApplied: true, 
         settledAt: new Date(),
         createdAt: new Date(),
       }

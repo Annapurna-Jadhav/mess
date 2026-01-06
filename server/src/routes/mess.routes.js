@@ -18,6 +18,7 @@ import {
   getMessAnalyticsSummary,
   askMessAnalyticsAI,
 } from "../controllers/analytics.controllers.js";
+import { getMessFeedbacks } from "../controllers/feedback.controllers.js";
 
 const router = express.Router();
 router.get("/profile", authMiddleware, getMessProfile);
@@ -42,5 +43,6 @@ router.get("/analytics", authMiddleware, getMessAnalytics);
 router.get("/analytics/summary", authMiddleware, getMessAnalyticsSummary);
 
 router.post("/analytics/ask", authMiddleware, askMessAnalyticsAI);
+router.get("/messFeedbacks",authMiddleware,getMessFeedbacks)
 
 export default router;

@@ -13,7 +13,7 @@ import { getStudentMealDays } from "@/api/student.api";
 import { generateMealQR } from "@/api/qr.api";
 import axiosClient from "@/api/axiosClient";
 
-/* ================= COMPONENT ================= */
+
 
 export default function StudentMealPage() {
   const [profile, setProfile] = useState<any>(null);
@@ -21,7 +21,7 @@ export default function StudentMealPage() {
   const [selectedDay, setSelectedDay] =
     useState<StudentMealDay | null>(null);
 
-  /* ---------- QR STATE ---------- */
+ 
   const [qrOpen, setQrOpen] = useState(false);
   const [qrMeal, setQrMeal] = useState<MealType | null>(null);
   const [qrToken, setQrToken] = useState<string | null>(null);
@@ -29,7 +29,7 @@ export default function StudentMealPage() {
 
   const [loading, setLoading] = useState(true);
 
-  /* ================= AUTO CLOSE QR WHEN SERVED ================= */
+ 
   useEffect(() => {
     if (!selectedDay || !qrMeal) return;
 
@@ -41,7 +41,7 @@ export default function StudentMealPage() {
     }
   }, [selectedDay, qrMeal]);
 
-  /* ================= LOAD DATA ================= */
+ 
   useEffect(() => {
     async function load() {
       try {

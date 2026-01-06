@@ -5,6 +5,7 @@ import MessDashboard from '@/pages/mess-manager/MessDashboard.tsx';
 import ProtectedRoute from '@/routes/ProtectedRoute.tsx';
 import ScanMeal from '@/pages/mess-manager/ScanMeal';
 import AnalyticsPage from '@/pages/mess-manager/AnalyticsPage';
+import MessFeedbacksPage from '@/pages/mess-manager/MessFeedbackPage';
 
 
 
@@ -18,7 +19,7 @@ function MessRoutes() {
     <Route path="/dashboard" element={<MessDashboard />} />
     <Route path="/scanQR" element={<ScanMeal />} />
     <Route path="/analytics" element={<AnalyticsPage/>}/>
-
+  <Route path="/feedbacks" element={<MessFeedbacksPage/>}/>
     
     
     

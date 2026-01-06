@@ -50,6 +50,7 @@ app.use("/api/v1/qr", qrRoutes);
 
 
 
+
 app.use((err, req, res, next) => {
   if (err instanceof ApiError) {
     return res.status(err.statusCode).json({
