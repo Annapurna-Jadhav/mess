@@ -1,7 +1,7 @@
 
 import Navbar from "@/components/DashboardNavbar";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
+
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -16,7 +16,7 @@ import LeftHero from "@/components/LeftHero";
 
 
 export default function Home() {
-  const { user } = useAuth();
+  
   const navigate = useNavigate();
 
   
