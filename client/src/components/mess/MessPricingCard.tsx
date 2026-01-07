@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+
 import { IndianRupee, AlertTriangle } from "lucide-react";
 import { type MessProfile } from "@/types/mess.types";
 

@@ -1,4 +1,4 @@
-import { useEffect,useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import axiosClient from "@/api/axiosClient";
 import { getMessAnalyticsSummary } from "@/api/mess.api";
 import { cn } from "@/lib/utils";
@@ -28,7 +28,7 @@ const [mode, setMode] = useState<AnalyticsMode>("count");
 const [metrics, setMetrics] = useState<MetricKey[]>(["served"]);
 const [meals, setMeals] = useState<MealKey[]>(["breakfast"]);
 
-// const [lastValidTotals, setLastValidTotals] = useState<any>(null);
+
 const [rangeWarning, setRangeWarning] = useState<string | null>(null);
 
 const [data, setData] = useState<{
@@ -102,7 +102,7 @@ useEffect(() => {
   loadRangeAnalytics();
 }, [mode]);
 
-const loadRangeAnalytics = async (fromModeChange = false) => {
+const loadRangeAnalytics = async () => {
   const { fromDate, toDate } = getEffectiveRange();
 
   try {

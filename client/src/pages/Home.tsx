@@ -19,28 +19,16 @@ export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleCTA = () => {
-    if (!user) return navigate("/login");
-
-    const redirect = {
-      student: "/student/dashboard",
-      mess_manager: "/mess/dashboard",
-      hostel_office: "/admin/dashboard",
-    } as const;
-
-    navigate(redirect[user.role]);
-  };
+  
 
   return (
     <>
       <Navbar />
 
-      {/* ================= HERO ================= */}
-     {/* HERO */}
+      
 <section className="relative min-h-screen flex items-center overflow-hidden">
   <div className="max-w-7xl mx-auto px-6 pt-36 grid md:grid-cols-2 gap-20 items-center">
 
-    {/* LEFT SIDE — your heading */}
     <LeftHero/>
 
     {/* RIGHT SIDE — ORBIT SYSTEM */}

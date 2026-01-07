@@ -3,14 +3,11 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-
 import toast from "react-hot-toast";
 
 import { getApprovedMesses } from "@/api/admin.api";
 import { selectMess, getMyStudentProfile } from "@/api/student.api";
 
-/* ================= TYPES ================= */
 
 type Mess = {
   id: string;

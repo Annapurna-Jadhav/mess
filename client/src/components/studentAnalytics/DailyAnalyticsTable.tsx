@@ -22,20 +22,20 @@ export default function DailyAnalyticsTable({
   data: any[];
 }) {
   const [search, setSearch] = useState("");
-  const [dateFilter, setDateFilter] = useState("");
+  const [dateFilter] = useState("");
   const [sort, setSort] = useState<"newest" | "oldest">("newest");
 
   const filteredData = useMemo(() => {
     let rows = [...data];
 
-    /* ---------- SORT ---------- */
+  
     rows.sort((a, b) =>
       sort === "newest"
         ? b.date.localeCompare(a.date)
         : a.date.localeCompare(b.date)
     );
 
-    /* ---------- DATE FILTER ---------- */
+ 
     if (dateFilter) {
       rows = rows.filter((d) => d.date === dateFilter);
     }

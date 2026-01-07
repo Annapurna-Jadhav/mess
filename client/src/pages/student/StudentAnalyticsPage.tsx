@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import axiosClient from "@/api/axiosClient";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,7 +10,7 @@ import StudentRevenueChart from "@/components/studentAnalytics/AnalyticsChart";
 import DailyAnalyticsTable from "@/components/studentAnalytics/DailyAnalyticsTable";
 
 
-import type { AnalyticsMode, MealType } from "@/components/studentAnalytics/types";
+import type { AnalyticsMode } from "@/components/studentAnalytics/types";
 
 export default function StudentAnalyticsPage() {
  
@@ -25,13 +25,7 @@ export default function StudentAnalyticsPage() {
     to?: string;
   }>({});
 
-  const [selectedMeals, setSelectedMeals] = useState<MealType[]>([
-    "breakfast",
-    "lunch",
-    "snacks",
-    "dinner",
-  ]);
-
+ 
   const [data, setData] = useState<{
     daily: any[];
     summary: any | null;

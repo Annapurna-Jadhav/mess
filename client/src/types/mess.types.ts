@@ -1,4 +1,4 @@
-import type { MealType } from "./meal.types";
+
 export type MessProfile = {
   messInfo: {
     messId: string;
