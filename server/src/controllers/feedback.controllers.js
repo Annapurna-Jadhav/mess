@@ -11,42 +11,50 @@ const nlpClient = new LanguageServiceClient({
 });
 
 
-function mapEntitiesToTags(entities = []) {
+function detectTagsFromText(text) {
+  const t = text.toLowerCase();
   const tags = new Set();
 
-  for (const ent of entities) {
-    const name = ent.name.toLowerCase();
+  if (
+    /(food|meal|rice|roti|curry|sabzi|taste|oily|salty|spicy|bland|stale|waste|bad|worst|poor taste)/.test(t)
+  ) {
+    tags.add("FOOD_QUALITY");
+  }
 
-    // Food related
-    if (/(food|rice|curry|vegetable|taste|oily|salty|spicy)/i.test(name)) {
-      tags.add("FOOD_QUALITY");
-      tags.add("FOOD_TASTE");
-    }
+  if (
+    /(quantity|less food|very less|not enough|small portion|little food|insufficient|half portion|low quantity)/.test(t)
+  ) {
+    tags.add("FOOD_QUANTITY");
+  }
 
-    // Staff / service
-    if (/(staff|people|server|worker|employee)/i.test(name)) {
-      tags.add("SERVICE");
-    }
+  if (
+    /(management|infrastructure|facility|mess|hall|seating|fan|light|water|arrangement|crowded|overcrowded)/.test(t)
+  ) {
+    tags.add("INFRASTRUCTURE");
+  }
 
-    // Hygiene / cleanliness
-    if (/(plate|glass|wash|floor|toilet|dirty|clean|smell)/i.test(name)) {
-      tags.add("HYGIENE");
-      tags.add("CLEANLINESS");
-    }
+  if (
+    /(dirty|unclean|smell|stink|toilet|wash|plate|glass|hygiene|cleanliness|cockroach|insect|mosquito)/.test(t)
+  ) {
+    tags.add("HYGIENE");
+  }
 
-    // Infrastructure
-    if (/(water|fan|light|seat|hall|infrastructure)/i.test(name)) {
-      tags.add("INFRASTRUCTURE");
-    }
+  
+  if (
+    /(staff|worker|server|employee|service|behavior|rude|slow|unresponsive|attitude)/.test(t)
+  ) {
+    tags.add("SERVICE");
+  }
 
-    // Timing
-    if (/(time|delay|late|timing)/i.test(name)) {
-      tags.add("TIMING");
-    }
+  if (
+    /(late|delay|timing|time|queue|line|waiting|long wait)/.test(t)
+  ) {
+    tags.add("TIMING");
   }
 
   return Array.from(tags);
 }
+
 
 export const submitFeedback = asyncHandler(async (req, res) => {
   const { uid } = req.user;
@@ -70,21 +78,22 @@ export const submitFeedback = asyncHandler(async (req, res) => {
   const messId = student.selectedMess.messId;
 
   
-  const [analysis] = await nlpClient.analyzeEntitySentiment({
-    document: {
-      content: message,
-      type: "PLAIN_TEXT",
-    },
-  });
+  const [sentimentResult] = await nlpClient.analyzeSentiment({
+  document: {
+    content: message,
+    type: "PLAIN_TEXT",
+  },
+});
 
-  const score = analysis.documentSentiment?.score ?? 0;
+const score = sentimentResult.documentSentiment?.score ?? 0;
 
-  let sentiment = "NEUTRAL";
-  if (score > 0.25) sentiment = "POSITIVE";
-  else if (score < -0.25) sentiment = "NEGATIVE";
+let sentiment = "NEUTRAL";
+if (score >= 0.2) sentiment = "POSITIVE";
+else if (score <= -0.2) sentiment = "NEGATIVE";
 
 
-  let tags = mapEntitiesToTags(analysis.entities);
+let tags = detectTagsFromText(message);
+
 
 
   if (!tags.length) {

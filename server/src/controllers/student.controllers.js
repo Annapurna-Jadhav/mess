@@ -11,10 +11,24 @@ import { getTodayISO ,addDaysISO,getWeekRangeISO} from "../utils/date.js";
 import { initStudentMealDays } from "../utils/initStudentMealDays.js";
 
 function isAbsentAllowed(mealTime, date) {
-  const mealDateTime = new Date(`${date}T${mealTime}:00`);
+  if (!mealTime || !date) return false;
+
+ 
+  const cleanTime = mealTime.includes("-") ? mealTime.split("-")[0] : mealTime;
+
+  const [year, month, day] = date.split("-").map(Number);
+  const [hour, minute] = cleanTime.split(":").map(Number);
+
+  if ([year, month, day, hour, minute].some(v => Number.isNaN(v))) {
+    return false;
+  }
+
+  const mealDateTime = new Date(year, month - 1, day, hour, minute, 0);
   const cutoff = new Date(mealDateTime.getTime() - 24 * 60 * 60 * 1000);
+
   return new Date() < cutoff;
 }
+
 
 
 export const verifyReceipt = asyncHandler(async (req, res) => {
@@ -305,8 +319,6 @@ export const selectMess = asyncHandler(async (req, res) => {
   );
 });
 
-
-
 export const declareAbsent = asyncHandler(async (req, res) => {
   const { uid } = req.user;
   const { date, mealType } = req.body;
@@ -321,6 +333,11 @@ export const declareAbsent = asyncHandler(async (req, res) => {
   }
 
   const day = daySnap.data();
+
+  if (!day.meals || !day.meals[mealType]) {
+    throw new ApiError(400, "Invalid meal type");
+  }
+
   const meal = day.meals[mealType];
 
   if (!isAbsentAllowed(meal.time, date)) {
@@ -332,6 +349,10 @@ export const declareAbsent = asyncHandler(async (req, res) => {
   }
 
   const studentSnap = await db.collection("students").doc(uid).get();
+  if (!studentSnap.exists) {
+    throw new ApiError(404, "Student not found");
+  }
+
   const student = studentSnap.data();
 
   const messId = student.selectedMess.messId;
@@ -340,7 +361,6 @@ export const declareAbsent = asyncHandler(async (req, res) => {
 
   const batch = db.batch();
 
-  
   batch.update(dayRef, {
     [`meals.${mealType}.status`]: "DECLARED_ABSENT",
     updatedAt: new Date(),
@@ -370,6 +390,7 @@ export const declareAbsent = asyncHandler(async (req, res) => {
     new ApiResponse(200, null, "Absent declared")
   );
 });
+
 
 
 

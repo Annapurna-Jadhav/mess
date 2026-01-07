@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import { toast } from "react-hot-toast";
 
 import DateStrip from "@/components/student/DateStrip";
@@ -28,6 +28,7 @@ export default function StudentMealPage() {
   const [qrExpires, setQrExpires] = useState<number>(0);
 
   const [loading, setLoading] = useState(true);
+  const hasInitializedRef = useRef(false);
 
  
   useEffect(() => {
@@ -52,7 +53,7 @@ export default function StudentMealPage() {
 
         setProfile(profileData);
         setDays(daysArray);
-        setSelectedDay(daysArray[0] ?? null);
+       
       } catch (err: any) {
         toast.error(
           err.response?.data?.message || "Failed to load meal data"
@@ -64,38 +65,86 @@ export default function StudentMealPage() {
 
     load();
   }, []);
+useEffect(() => {
+  if (hasInitializedRef.current) return;
+  if (!days || days.length === 0) return;
 
-  /* ================= ACTIONS ================= */
+  const today = new Date().toISOString().split("T")[0];
+  const todayDay = days.find((d) => d.date === today);
 
-  const handleDeclareAbsent = async (meal: MealType) => {
-    try {
-      await axiosClient.post("/student/declare-absent", {
-        date: selectedDay!.date,
-        mealType: meal,
+  if (todayDay) {
+    setSelectedDay(todayDay);
+  } else {
+    setSelectedDay(days[0]);
+  }
+
+  hasInitializedRef.current = true;
+}, [days]);
+
+ 
+  //   try {
+  //     await axiosClient.post("/student/declare-absent", {
+  //       date: selectedDay!.date,
+  //       mealType: meal,
+  //     });
+
+  //     toast.success("Absent declared");
+
+  //     setDays((prev) =>
+  //       prev.map((d) =>
+  //         d.date === selectedDay!.date
+  //           ? {
+  //               ...d,
+  //               meals: {
+  //                 ...d.meals,
+  //                 [meal]: {
+  //                   ...d.meals[meal],
+  //                   status: "DECLARED_ABSENT",
+  //                 },
+  //               },
+  //             }
+  //           : d
+  //       )
+  //     );
+  //   } catch (err: any) {
+  //     toast.error(err.response?.data?.message || "Action failed");
+  //   }
+  // };
+const handleDeclareAbsent = async (meal: MealType) => {
+  try {
+    await axiosClient.post("/student/declare-absent", {
+      date: selectedDay!.date,
+      mealType: meal,
+    });
+
+    toast.success("Absent declared");
+
+    setDays((prev) => {
+      return prev.map((d) => {
+        if (d.date === selectedDay!.date) {
+          const updatedDay = {
+            ...d,
+            meals: {
+              ...d.meals,
+              [meal]: {
+                ...d.meals[meal],
+                status: "DECLARED_ABSENT",
+              },
+            },
+          };
+
+     
+          setSelectedDay(updatedDay);
+
+          return updatedDay;
+        }
+        return d;
       });
-
-      toast.success("Absent declared");
-
-      setDays((prev) =>
-        prev.map((d) =>
-          d.date === selectedDay!.date
-            ? {
-                ...d,
-                meals: {
-                  ...d.meals,
-                  [meal]: {
-                    ...d.meals[meal],
-                    status: "DECLARED_ABSENT",
-                  },
-                },
-              }
-            : d
-        )
-      );
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Action failed");
-    }
-  };
+    });
+  } catch (err: any) {
+    toast.error(err.response?.data?.message || "Action failed");
+  }
+};
 
   const handleGenerateQR = async (meal: MealType) => {
     try {
@@ -110,7 +159,6 @@ export default function StudentMealPage() {
     }
   };
 
-  /* ================= LOADING & SAFETY ================= */
   if (loading) {
     return (
       <div className="h-[60vh] flex items-center justify-center text-muted-foreground">
@@ -127,7 +175,10 @@ export default function StudentMealPage() {
     );
   }
 
-  /* ================= UI ================= */
+
+
+
+
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">

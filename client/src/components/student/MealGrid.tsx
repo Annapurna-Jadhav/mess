@@ -29,12 +29,12 @@ function canGenerateQRForMeal(
 ) {
   const today = new Date().toISOString().split("T")[0];
 
-  // ❌ Not today
+
   if (date !== today) return false;
 
   const status = meals[meal].status;
 
-  // ❌ Hard blocks
+  
   if (
     status === "SERVED" ||
     status === "DECLARED_ABSENT" ||
@@ -43,14 +43,34 @@ function canGenerateQRForMeal(
     return false;
   }
 
-  // 🧪 HACKATHON OVERRIDE — dinner always enabled
+  
   if (meal === "dinner") return true;
 
-  // ✅ Normal meals only during time window
+
   return isWithinTime(MEAL_RANGES[meal]);
 }
 
-function canDeclareAbsentForMeal(date: string, meal: MealType) {
+// function canDeclareAbsentForMeal(date: string, meal: MealType) {
+//   const START: Record<MealType, string> = {
+//     breakfast: "08:00",
+//     lunch: "12:30",
+//     snacks: "16:30",
+//     dinner: "19:30",
+//   };
+
+//   const [h, m] = START[meal].split(":").map(Number);
+//   const d = new Date(date);
+//   d.setHours(h, m, 0, 0);
+
+//   return d.getTime() - Date.now() >= 24 * 60 * 60 * 1000;
+// }
+function canDeclareAbsentForMeal(
+  date: string,
+  meal: MealType,
+  status: StudentMealDay["meals"][MealType]["status"]
+) {
+  if (status !== "NONE") return false; // 🔥 THIS IS CRITICAL
+
   const START: Record<MealType, string> = {
     breakfast: "08:00",
     lunch: "12:30",
@@ -87,21 +107,14 @@ export function MealGrid({
     day.meals
   );
 
-  console.group(`🍽️ MEAL GRID DEBUG → ${meal.toUpperCase()}`);
-  console.log("date:", day.date);
-  console.log("today:", new Date().toISOString().split("T")[0]);
-  console.log("status:", status);
-  console.log("isDinner:", meal === "dinner");
-  console.log("canGenerateQR:", canQR);
-  console.groupEnd();
-
+  
   return (
     <MealActionCard
       key={meal}
       meal={meal}
       price={prices[meal]}
       status={status}
-      canDeclareAbsent={canDeclareAbsentForMeal(day.date, meal)}
+      canDeclareAbsent={canDeclareAbsentForMeal(day.date, meal,status)}
       canGenerateQR={canQR}
       onDeclareAbsent={() => onDeclareAbsent(meal)}
       onGenerateQR={() => onGenerateQR(meal)}

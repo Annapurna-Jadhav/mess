@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-/* ---------------- CONSTANTS ---------------- */
 
 const SENTIMENTS = ["ALL", "POSITIVE", "NEUTRAL", "NEGATIVE"] as const;
 
@@ -27,7 +26,7 @@ const TAGS = [
   "INFRASTRUCTURE",
 ] as const;
 
-/* ---------------- COMPONENT ---------------- */
+
 
 export function FeedbackFilters({
   feedbacks = [],
