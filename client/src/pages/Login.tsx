@@ -44,7 +44,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md border-muted shadow-lg">
-        {/* HEADER */}
+    
         <CardHeader className="text-center space-y-2 pb-6">
           <CardTitle className="text-2xl font-semibold text-[#6770d2]">
             Welcome to SmartMessBalance

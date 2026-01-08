@@ -7,7 +7,7 @@ const LeftHero = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-10">
       {/* Tag */}
       <span
         className="
@@ -22,17 +22,17 @@ const LeftHero = () => {
         NITK Smart Mess Card System
       </span>
 
-      {/* Main Heading */}
+
       <h1 className="text-5xl md:text-6xl font-extrabold leading-tight">
-        Smart Mess Balance
+        Smart Mess Card
       </h1>
 
-      {/* Sub Heading */}
+
       <h2 className="text-xl md:text-2xl text-muted-foreground leading-relaxed">
         Digital Mess Card • Centralized Records • Role-Based Access
       </h2>
 
-      {/* CTA — show ONLY if user is NOT logged in */}
+     
       {!user && (
         <Button
           size="lg"

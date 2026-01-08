@@ -1,51 +1,55 @@
 import { motion } from "framer-motion";
 import {
-  ShieldCheck,
-  ScanFace,
+  QrCode,
+
   ClipboardCheck,
-  UtensilsCrossed,
-  Trash2,
-  Eye,
+  
+  Wallet,
+  BarChart3,
+  Brain,
+  MessageSquare
 } from "lucide-react";
 
 const features = [
   {
-    icon: ShieldCheck,
-    title: "Secure Login",
-    desc: "Institute authentication with Firebase",
+    icon: QrCode,
+    title: "QR-Based Authentication",
+    desc: "Secure, time-bound QR system for student authentication and mess entry.",
     offset: "translate-y-0",
   },
   {
-    icon: ScanFace,
-    title: "Face Detection",
-    desc: "Student verification at mess entry",
+    icon: ClipboardCheck,
+    title: "Automated Meal Attendance",
+    desc: "Meal-wise attendance tracking with duplicate scan and time-window control.",
     offset: "-translate-y-6",
   },
   {
-    icon: ClipboardCheck,
-    title: "Mess Attendance",
-    desc: "Automatic attendance marking",
+    icon: Wallet,
+    title: "Smart Wallet & Credits",
+    desc: "Automatic wallet credits for missed meals with controlled mess and food court usage.",
     offset: "translate-y-4",
   },
   {
-    icon: UtensilsCrossed,
-    title: "Menu Updation",
-    desc: "Digital menu management by mess staff",
+    icon: BarChart3,
+    title: "Deep Mess Analytics",
+    desc: "Insights on student count, revenue flow, peak hours, and meal-wise distribution.",
     offset: "-translate-y-2",
   },
   {
-    icon: Eye,
-    title: "Transparency",
-    desc: "Students & hostel office visibility",
+    icon: MessageSquare,
+    title: "Feedback & Sentiment Analysis",
+    desc: "Tag-based student feedback analyzed using sentiment analysis for actionable insights.",
     offset: "translate-y-6",
   },
   {
-    icon: Trash2,
-    title: "Mess Waste Tracking",
-    desc: "Consumption-based waste reduction",
+    icon: Brain,
+    title: "AI-Powered Predictions",
+    desc: "Vertex AI–driven analytics for demand forecasting and food waste reduction.",
     offset: "translate-y-2",
   },
 ];
+
+
 
 export default function HeroFeatureMosaic() {
   return (
