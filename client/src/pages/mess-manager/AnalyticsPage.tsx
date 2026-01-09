@@ -56,7 +56,7 @@ const getEffectiveRange = () => {
     };
   }
 
-  // fallback → last 30 days
+ 
   const today = new Date();
   const end = today.toISOString().split("T")[0];
 
@@ -161,7 +161,7 @@ const loadRangeAnalytics = async () => {
   );
 }
 
-  /* ---------------- ERROR ---------------- */
+ 
  if (error) {
   return (
     <Card className="max-w-xl mx-auto text-center">
@@ -176,7 +176,7 @@ const loadRangeAnalytics = async () => {
 }
 
 
-  /* ---------------- EMPTY ---------------- */
+ 
  if (!data || (mode !== "peakHours" && data.daily.length === 0)) {
   return (
     <Card className="max-w-xl mx-auto text-center">
@@ -191,10 +191,10 @@ const loadRangeAnalytics = async () => {
 }
 
 
-  /* ---------------- MAIN UI ---------------- */
+  
   return (
     <div className="min-h-screen bg-background px-6 py-6 space-y-6">
-      {/* ---------- HEADER ---------- */}
+      
       <div className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight">
           Mess Analytics
@@ -204,7 +204,7 @@ const loadRangeAnalytics = async () => {
         </p>
       </div>
 
-      {/* ---------- CONTAINER 1: DATE + STATS ---------- */}
+     
    <div
   className="
     w-full
@@ -216,7 +216,6 @@ const loadRangeAnalytics = async () => {
     shadow-sm
   "
 >
-  {/* ---------- DATE STRIP ---------- */}
   <div className="space-y-1">
     <p className="text-sm font-medium">
       Date Range
@@ -232,7 +231,6 @@ const loadRangeAnalytics = async () => {
     />
   </div>
 
-  {/* ---------- STATS GRID ---------- */}
   <div className="flex-1 space-y-2">
     <h3 className="text-sm font-semibold tracking-wide">
       {mode === "revenue"
@@ -262,7 +260,6 @@ const loadRangeAnalytics = async () => {
 </div>
 
 
-      {/* ---------- CONTAINER 2: MODE + FILTERS ---------- */}
 <div
   className="
     w-full
@@ -273,8 +270,7 @@ const loadRangeAnalytics = async () => {
     shadow-sm
   "
 >
-  
-  {/* ---------- MAIN GRID ---------- */}
+
   <div
     className="
       grid
@@ -284,7 +280,7 @@ const loadRangeAnalytics = async () => {
       items-start
     "
   >
-    {/* ---------- MODE SELECTION (LEFT) ---------- */}
+
     <div className="space-y-4">
       <div>
         <p className="text-sm font-semibold text-foreground">
@@ -323,7 +319,7 @@ const loadRangeAnalytics = async () => {
       </div>
     </div>
 
-    {/* ---------- FILTERS (RIGHT) ---------- */}
+ 
     <div
       className="
         relative
@@ -352,7 +348,6 @@ const loadRangeAnalytics = async () => {
 </div>
 
 
-      {/* ---------- CHART ---------- */}
       <div className="w-full h-[420px]">
         {mode !== "peakHours" && (
           <AnalyticsChart
@@ -372,7 +367,7 @@ const loadRangeAnalytics = async () => {
 
         </div>
 
-      {/* ---------- AI ASSISTANT ---------- */}
+    
       <section className="mt-10 pt-6 border-t border-border/60">
         <AnalyticsAIBox />
       </section>

@@ -100,6 +100,12 @@ const roleDashboardNav: Record<
     },
   ],
 };
+const publicNavItems = [
+  { label: "Problem", to: "#problem" },
+  { label: "System", to: "#system" },
+  { label: "For Whom", to: "#for-whom" },
+];
+
 
 
 
@@ -113,6 +119,13 @@ export default function DashboardNavbar() {
  const navItems = user
   ? roleDashboardNav[user.role as Exclude<Role, "public">]
   : [];
+  const handleScroll = (hash: string) => {
+  const el = document.querySelector(hash);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
+
 
   return (
     <nav className="border-b bg-background/70 backdrop-blur-xl">
@@ -162,6 +175,23 @@ export default function DashboardNavbar() {
           </div>
         )}
 
+        {!user && (
+  <div className="flex items-center gap-1 rounded-full bg-muted px-2 py-1">
+    {publicNavItems.map((item) => (
+      <button
+        key={item.to}
+        onClick={() => handleScroll(item.to)}
+        className="px-4 py-1.5 rounded-full text-sm font-medium
+                   text-muted-foreground hover:text-foreground
+                   hover:bg-muted/60 transition"
+      >
+        {item.label}
+      </button>
+    ))}
+  </div>
+)}
+
+
    
         <div className="flex items-center gap-2">
 
@@ -176,7 +206,7 @@ export default function DashboardNavbar() {
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
           </Button>
 
-          {/* AUTH ACTION */}
+         
           {user ? (
             <Button
               variant="ghost"

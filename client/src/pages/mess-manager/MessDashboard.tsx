@@ -21,7 +21,6 @@ export default function MessDashboardPage() {
     });
   }, []);
 
-  /* ---------------- LOADING ---------------- */
   if (!data) {
     return (
       <div className="h-[60vh] flex items-center justify-center text-muted-foreground">
@@ -33,7 +32,6 @@ export default function MessDashboardPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-8 space-y-10">
 
-      {/* ================= HEADER ================= */}
       <div className="rounded-3xl border bg-gradient-to-br from-[#6770d2]/10 via-transparent to-transparent p-6">
         <MessHeader data={data} />
       </div>
@@ -56,7 +54,6 @@ export default function MessDashboardPage() {
       
       <div className="grid lg:grid-cols-2 gap-6">
 
-        {/* PRICING & POLICY */}
         <Card className="rounded-3xl p-6 hover:shadow-xl transition">
           <h3 className="text-sm font-semibold text-[#6770d2] mb-4 uppercase tracking-wide">
             Pricing & Policy
@@ -64,7 +61,6 @@ export default function MessDashboardPage() {
           <MessPricingCard data={data} />
         </Card>
 
-        {/* MEAL STATS */}
         <Card className="rounded-3xl p-6 hover:shadow-xl transition">
           <h3 className="text-sm font-semibold text-[#6770d2] mb-4 uppercase tracking-wide">
             Meal Performance

@@ -31,9 +31,22 @@
     opacity: 0;
   }
 }
+section {
+  scroll-margin-top: 96px;
+}
 
 .animate-flow {
   animation: flow 1.6s ease-in-out infinite;
+}
+/* Hide scrollbar but keep scrolling */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
 

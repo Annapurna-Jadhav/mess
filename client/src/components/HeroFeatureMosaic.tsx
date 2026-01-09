@@ -53,49 +53,46 @@ const features = [
 
 export default function HeroFeatureMosaic() {
   return (
-    <div className="relative w-full max-w-lg mx-auto">
-      <div className="grid grid-cols-2 gap-6">
-        {features.map((f, i) => (
-          <motion.div
-            key={f.title}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08 }}
-            whileHover={{ y: -6, scale: 1.04 }}
-            className={`
-              group relative
-              ${f.offset}
-              bg-background/80 backdrop-blur-xl
-              border border-[#6770d2]/20
-              rounded-2xl p-5
-              shadow-[0_15px_40px_rgba(0,0,0,0.15)]
-              hover:shadow-[0_30px_80px_rgba(103,112,210,0.35)]
-              transition-all
-            `}
-          >
-            {/* Glow */}
-            <div className="absolute inset-0 rounded-2xl bg-[#6770d2]/5 opacity-0 group-hover:opacity-100 transition" />
-
-            <div className="relative flex items-start gap-4">
-              <div className="
-                w-10 h-10 rounded-xl
+  <div className="relative w-full max-w-md mx-auto">
+    <div className="grid grid-cols-2 gap-4">
+      {features.map((f, i) => (
+        <motion.div
+          key={f.title}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: i * 0.05 }}
+          whileHover={{ y: -4, scale: 1.03 }}
+          className={`
+            group relative
+            ${f.offset}
+            bg-background/80 backdrop-blur-xl
+            border border-[#6770d2]/20
+            rounded-xl p-4
+            shadow-sm
+            hover:shadow-[0_18px_40px_rgba(103,112,210,0.25)]
+            transition-all
+          `}
+        >
+          <div className="relative flex flex-col items-center text-center gap-3">
+            <div
+              className="
+                w-9 h-9 rounded-xl
                 bg-[#6770d2]/15
                 flex items-center justify-center
-                group-hover:scale-110 transition
-              ">
-                <f.icon size={20} className="text-[#6770d2]" />
-              </div>
-
-              <div>
-                <h4 className="text-sm font-semibold">{f.title}</h4>
-                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                  {f.desc}
-                </p>
-              </div>
+                group-hover:scale-105 transition
+              "
+            >
+              <f.icon size={18} className="text-[#6770d2]" />
             </div>
-          </motion.div>
-        ))}
-      </div>
+
+            <h4 className="text-xs font-semibold leading-snug">
+              {f.title}
+            </h4>
+          </div>
+        </motion.div>
+      ))}
     </div>
-  );
+  </div>
+);
+
 }

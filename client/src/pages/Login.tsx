@@ -55,9 +55,9 @@ export default function Login() {
         </CardHeader>
 
         <CardContent className="space-y-8">
-          {/* FORM */}
+        
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* EMAIL */}
+        
             <div className="space-y-2">
               <Label htmlFor="email">Institute Email</Label>
               <div className="relative">
@@ -78,7 +78,7 @@ export default function Login() {
               )}
             </div>
 
-            {/* PASSWORD */}
+          
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
@@ -109,7 +109,7 @@ export default function Login() {
               )}
             </div>
 
-            {/* SUBMIT BUTTON */}
+            
             <Button
               type="submit"
               className="w-full h-11 bg-[#6770d2] hover:bg-[#5b63c7] transition-colors"
@@ -119,7 +119,6 @@ export default function Login() {
             </Button>
           </form>
 
-          {/* MODE SWITCH */}
           <p className="text-sm text-center text-muted-foreground">
             {mode === "login" ? "New here?" : "Already have an account?"}{" "}
             <button
@@ -135,7 +134,7 @@ export default function Login() {
 
           <Separator />
 
-          {/* GOOGLE AUTH */}
+    
           <Button
             type="button"
             variant="outline"

@@ -1,4 +1,3 @@
-// pages/AdminApprovals.tsx
 import { useEffect, useState } from "react";
 import {
   getPendingMessApps,
@@ -13,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { CheckCircle2, XCircle } from "lucide-react";
 
-/* ================= TYPES ================= */
+
 
 type MessApplication = {
   id: string;
@@ -51,7 +50,7 @@ type ActionState =
   | "rejecting"
   | "rejected";
 
-/* ================= COMPONENT ================= */
+
 
 export default function AdminApprovals() {
   const [apps, setApps] = useState<MessApplication[]>([]);
@@ -62,7 +61,6 @@ export default function AdminApprovals() {
   );
   const [loading, setLoading] = useState(true);
 
-  /* ================= FETCH ================= */
 
   useEffect(() => {
     getPendingMessApps()
@@ -76,7 +74,7 @@ export default function AdminApprovals() {
       .finally(() => setLoading(false));
   }, []);
 
-  /* ================= ACTIONS ================= */
+
 
   const handleApprove = async (id: string) => {
     try {
@@ -98,12 +96,12 @@ export default function AdminApprovals() {
     }
   };
 
-  /* ================= RENDER ================= */
+ 
 
   return (
     <div className="p-6 space-y-6">
 
-      {/* HEADER */}
+     
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[#6770d2]">
@@ -119,21 +117,20 @@ export default function AdminApprovals() {
         </Badge>
       </div>
 
-      {/* LOADING */}
       {loading && (
         <div className="text-muted-foreground">
           Loading applications…
         </div>
       )}
 
-      {/* EMPTY STATE */}
+
       {!loading && apps.length === 0 && (
         <div className="border border-dashed rounded-xl p-12 text-center text-muted-foreground">
           No pending mess applications right now 🎉
         </div>
       )}
 
-      {/* CARDS */}
+      
       {!loading && apps.length > 0 && (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
           {apps.map((app) => {
@@ -192,7 +189,7 @@ export default function AdminApprovals() {
 
                   <Separator />
 
-                  {/* RULES */}
+                 
                   <div className="space-y-1">
                     <p>Penalty: {app.penaltyPercent}%</p>
                     <p>
@@ -203,7 +200,6 @@ export default function AdminApprovals() {
 
                   <Separator />
 
-                  {/* OPERATION */}
                   <div className="space-y-1">
                     <p>
                       {app.operation.startDate} →{" "}
@@ -215,7 +211,7 @@ export default function AdminApprovals() {
                     </p>
                   </div>
 
-                  {/* NOTE */}
+        
                   {state === "idle" && (
                     <Textarea
                       placeholder="Approval / rejection note (optional)"
@@ -229,7 +225,7 @@ export default function AdminApprovals() {
                     />
                   )}
 
-                  {/* ACTIONS */}
+          
                   <div className="flex gap-2 pt-2">
                     {state === "approved" && (
                       <Button

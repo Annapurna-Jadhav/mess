@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 
-/* ================= TYPES ================= */
+
 
 type FoodType = "VEG" | "NON_VEG" | "BOTH";
 
@@ -34,7 +34,7 @@ type Mess = {
   studentCount?: number;
 };
 
-/* ================= STYLES ================= */
+
 
 const foodBadgeClass: Record<FoodType, string> = {
   VEG: "bg-green-500/10 text-green-700 border border-green-500/30",
@@ -42,7 +42,6 @@ const foodBadgeClass: Record<FoodType, string> = {
   BOTH: "bg-[#6770d2]/10 text-[#6770d2] border border-[#6770d2]/30",
 };
 
-/* ================= COMPONENT ================= */
 
 export default function ApprovedMesses() {
   const [messes, setMesses] = useState<Mess[]>([]);
@@ -59,7 +58,7 @@ export default function ApprovedMesses() {
   return (
     <div className="p-6 space-y-6">
 
-      {/* HEADER */}
+  
       <div>
         <h1 className="text-2xl font-bold text-[#6770d2]">
           Approved Messes
@@ -69,14 +68,13 @@ export default function ApprovedMesses() {
         </p>
       </div>
 
-      {/* EMPTY STATE */}
+
       {messes.length === 0 && (
         <div className="rounded-xl border border-dashed p-12 text-center text-muted-foreground">
           No approved messes found
         </div>
       )}
 
-      {/* GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         {messes.map((mess) => (
           <Card
@@ -90,7 +88,6 @@ export default function ApprovedMesses() {
               hover:border-[#6770d2]/40
             "
           >
-            {/* Hover glow */}
             <div
               className="
                 pointer-events-none absolute inset-0
@@ -140,7 +137,7 @@ export default function ApprovedMesses() {
 
               <Separator className="opacity-60" />
 
-              {/* INFO */}
+             
               <div className="space-y-1 text-muted-foreground">
                <p className="text-xs">
   {mess.operation?.startDate ?? "N/A"} →{" "}
@@ -174,7 +171,7 @@ export default function ApprovedMesses() {
         ))}
       </div>
 
-      {/* DETAILS MODAL */}
+ 
       <Dialog
         open={!!selectedMess}
         onOpenChange={() => setSelectedMess(null)}
@@ -183,7 +180,7 @@ export default function ApprovedMesses() {
           {selectedMess && (
             <div className="space-y-6">
 
-              {/* TITLE */}
+       
               <div>
                 <h2 className="text-xl font-bold text-[#6770d2]">
                   {selectedMess.messName}
@@ -206,7 +203,7 @@ export default function ApprovedMesses() {
 
               <Separator />
 
-              {/* PRICING */}
+           
               <div>
                 <h3 className="font-semibold mb-2">
                   Meal Pricing
@@ -224,7 +221,7 @@ export default function ApprovedMesses() {
 
               <Separator />
 
-              {/* META */}
+        
               <div className="text-sm space-y-1">
               <p>
   Validity:{" "}
