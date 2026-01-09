@@ -111,7 +111,7 @@ export const applyMessManager = asyncHandler(async (req, res) => {
 
     estimatedCredits,
 
-    status: "PENDING_HOSTEL_APPROVAL",
+    status: "PENDING",
 
     createdAt: new Date(),
   });
