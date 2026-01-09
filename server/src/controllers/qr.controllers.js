@@ -273,10 +273,20 @@ export const scanMealEntry = asyncHandler(async (req, res) => {
       updatedAt: new Date(),
     });
 
+    // tx.update(db.collection("messes").doc(messId), {
+    //   servedCount: admin.firestore.FieldValue.increment(1),
+    //   totalRevenue: admin.firestore.FieldValue.increment(price), 
+    // });
+
+    // updated for testing purpose
+
     tx.update(db.collection("messes").doc(messId), {
-      servedCount: admin.firestore.FieldValue.increment(1),
-      totalRevenue: admin.firestore.FieldValue.increment(price), 
-    });
+  "stats.today.served": admin.firestore.FieldValue.increment(1),
+  "revenue.today": admin.firestore.FieldValue.increment(price),
+  "revenue.total": admin.firestore.FieldValue.increment(price),
+  "revenue.servedCount": admin.firestore.FieldValue.increment(1),
+  totalRevenue: admin.firestore.FieldValue.increment(price),
+});
 
    
     tx.set(

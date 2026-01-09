@@ -3,11 +3,10 @@ import db from "../config/firestore.js";
 
 const MEALS = ["breakfast", "lunch", "snacks", "dinner"];
 
-/* ---------- HELPERS ---------- */
 
 function getTodayDate() {
   const d = new Date();
-  return d.toISOString().split("T")[0]; // YYYY-MM-DD
+  return d.toISOString().split("T")[0]; 
 }
 
 function hasMealEnded(mealTimeRange) {
@@ -26,7 +25,7 @@ function hasMealEnded(mealTimeRange) {
   return now >= endTime;
 }
 
-/* ---------- MAIN SETTLEMENT ---------- */
+
 
 export const settleTodayFromStudentMealDays = async () => {
   const today = getTodayDate();

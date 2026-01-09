@@ -526,7 +526,6 @@ export const getStudentAnalytics = asyncHandler(async (req, res) => {
 
   const snap = await query.get();
 
-  /* ---------- EMPTY ---------- */
   if (snap.empty) {
     return res.status(200).json(
       new ApiResponse({

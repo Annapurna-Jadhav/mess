@@ -68,7 +68,7 @@ export const buildDailyStats = async (date = getTodayDate()) => {
         stats[meal].declaredAbsent++;
     }
 
-    /* 🔝 Peak bucket detection */
+
     for (const meal of Object.keys(stats)) {
       let peak = null;
       let max = 0;

@@ -61,7 +61,6 @@ export const settleMealWallet = async (mealType, date = getTodayDate()) => {
         });
       }
 
-      // accumulate mess revenue
       messRevenueIncrement += messRevenue;
 
       batch.update(eventRef, {
@@ -72,7 +71,7 @@ export const settleMealWallet = async (mealType, date = getTodayDate()) => {
       });
     }
 
-    // 🔥 UPDATE MESS REVENUE (ONCE)
+  
     if (messRevenueIncrement > 0) {
       batch.update(messRef, {
         totalRevenue: db.FieldValue.increment(messRevenueIncrement),

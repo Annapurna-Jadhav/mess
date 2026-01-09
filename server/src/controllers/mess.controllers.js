@@ -200,8 +200,7 @@ export const getMessProfile = asyncHandler(async (req, res) => {
   const messId = messDoc.id;
   const mess = messDoc.data();
 
-  /* ---------------- USE SEEDED STATS ---------------- */
-
+  
   const stats = mess.stats || {
     total: { served: 0, declaredAbsent: 0, noShow: 0 },
     today: { served: 0, declaredAbsent: 0, noShow: 0 },
@@ -212,7 +211,7 @@ export const getMessProfile = asyncHandler(async (req, res) => {
     today: 0,
   };
 
-  /* ---------------- RESPONSE ---------------- */
+
   return res.status(200).json(
     new ApiResponse({
       statusCode: 200,
