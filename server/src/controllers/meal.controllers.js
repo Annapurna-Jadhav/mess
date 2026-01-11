@@ -30,7 +30,6 @@ export const declareMealAbsence = asyncHandler(async (req, res) => {
     throw new ApiError(403, "Student is not enrolled in any mess");
   }
 
-  /* ---------- 24 HOUR RULE ---------- */
 
   const mealStart = new Date(
     `${date}T${MEAL_TIMINGS[mealType].start}:00`
@@ -57,13 +56,12 @@ export const declareMealAbsence = asyncHandler(async (req, res) => {
     throw new ApiError(409, "Absence already declared");
   }
 
-  /* ---------- UPDATE STUDENT STATE ---------- */
+ 
 
   await studentRef.update({
     [`mealStatus.${mealType}`]: "DECLARED_ABSENT",
   });
 
-  /* ---------- WRITE RAW EVENT ---------- */
 
   const messId = student.selectedMess.messId;
   const price =

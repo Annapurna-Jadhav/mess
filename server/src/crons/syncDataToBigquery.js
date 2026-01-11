@@ -35,7 +35,7 @@ export const syncFirestoreToBigQuery = async (messId) => {
     for (const [meal, mealData] of Object.entries(d.meals)) {
       rows.push({
         messId,
-        date: d.date, // STRING yyyy-mm-dd → DATE (BigQuery auto-casts)
+        date: d.date, 
         meal,
         served: mealData.served || 0,
         declaredAbsent: mealData.declaredAbsent || 0,

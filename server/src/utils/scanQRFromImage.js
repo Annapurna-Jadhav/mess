@@ -12,5 +12,5 @@ export const scanQRFromImage = async (buffer) => {
   const qr = jsQR(imageData.data, canvas.width, canvas.height);
   if (!qr) throw new Error("QR not found in receipt image");
 
-  return qr.data; // this is your signed QR token
+  return qr.data; 
 };

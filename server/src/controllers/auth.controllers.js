@@ -30,131 +30,123 @@ const parseStudent = (emailPrefix) => {
 }
 
 
+
+
+
 export const continueAuth = asyncHandler(async (req, res) => {
-  const { uid, email } = req.user;
+  
+  const { uid, email, customClaims } = req.user;
 
   if (!email?.endsWith("@nitk.edu.in")) {
     throw new ApiError(403, "Only NITK institute emails allowed");
   }
 
-  const emailPrefix = email.split("@")[0];
   
-const ADMIN_EMAIL=process.env.ADMIN_EMAIL;
+  if (customClaims?.role) {
+    return res.status(200).json(
+      new ApiResponse({
+        statusCode: 200,
+        message: "Authentication successful",
+        data: {
+          uid,
+          email,
+          role: customClaims.role,
+          ...(customClaims.messId && {
+            messId: customClaims.messId,
+            messName: customClaims.messName,
+            campusType: customClaims.campusType,
+          }),
+          ...(customClaims.studentRoll && {
+            studentRoll: customClaims.studentRoll,
+          }),
+        },
+      })
+    );
+  }
 
-  
+  const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+
+ 
   if (email === ADMIN_EMAIL) {
     const ref = db.collection("hostel_office").doc(uid);
+    const snap = await ref.get();
 
-    await ref.set(
-      {
+    if (!snap.exists) {
+      await ref.set({
         uid,
         email,
         role: "hostel_office",
-        lastLoginAt: admin.firestore.FieldValue.serverTimestamp(),
-      },
-      { merge: true }
-    );
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
+      await admin.auth().setCustomUserClaims(uid, {
+        role: "hostel_office",
+      });
+    }
 
     return res.status(200).json(
       new ApiResponse({
         statusCode: 200,
         message: "Admin authentication successful",
+        data: { uid, email, role: "hostel_office" },
+      })
+    );
+  }
+
+ 
+  const messManagerRef = db.collection("mess_managers").doc(uid);
+  const messManagerSnap = await messManagerRef.get();
+
+  if (messManagerSnap.exists) {
+    const messData = messManagerSnap.data();
+
+    await admin.auth().setCustomUserClaims(uid, {
+      role: "mess_manager",
+      messId: messData.messId,
+      messName: messData.messName,
+      campusType: messData.campusType,
+    });
+
+    return res.status(200).json(
+      new ApiResponse({
+        statusCode: 200,
+        message: "Mess management authentication successful",
         data: {
           uid,
           email,
-          role: "hostel_office",
+          role: "mess_manager",
+          messId: messData.messId,
+          messName: messData.messName,
+          campusType: messData.campusType,
         },
       })
     );
   }
 
  
-const mess = parseMessManager(emailPrefix);
-
-if (mess) {
- 
-  const messSnap = await db
-    .collection("messes")
-    .where("messAuth.email", "==", email)
-    .where("isActive", "==", true)
-    .limit(1)
-    .get();
-
-  if (messSnap.empty) {
-    throw new ApiError(403, "Mess manager not approved by admin");
-  }
-
-  const messDoc = messSnap.docs[0];
-  const messData = messDoc.data();
-
-  /* ---------- UPSERT MESS MANAGER PROFILE ---------- */
-  const ref = db.collection("mess_managers").doc(uid);
-
-  await ref.set(
-    {
-      uid,
-      email,
-      role: "mess_manager",
-
-      /* 🔹 BASIC IDENTITY */
-      messId: messDoc.id,
-      messName: messData.messName,
-      campusType: messData.campusType,
-
-      /* 🔹 CONTROL DATA (READ-ONLY FOR MANAGER) */
-      foodType: messData.foodType,
-      prices: messData.prices,
-      penaltyPercent: messData.penaltyPercent,
-      operation: messData.operation,
-
-      /* 🔹 STATS */
-      studentCount: messData.studentCount ?? 0,
-
-      lastLoginAt: admin.firestore.FieldValue.serverTimestamp(),
-      createdAt:
-        messData.createdAt ??
-        admin.firestore.FieldValue.serverTimestamp(),
-    },
-    { merge: true }
-  );
-
-  /* ---------- RESPONSE ---------- */
-  return res.status(200).json(
-    new ApiResponse({
-      statusCode: 200,
-      message: "Mess management authentication successful",
-      data: {
-        uid,
-        email,
-        role: "mess_manager",
-        messId: messDoc.id,
-        messName: messData.messName,
-        campusType: messData.campusType,
-      },
-    })
-  );
-}
-
-
-  // ---------- STUDENT ----------
   const student = parseStudent(email);
   if (!student) {
     throw new ApiError(403, "Invalid institute email format");
   }
 
-  const ref = db.collection("students").doc(uid);
+  const studentRef = db.collection("students").doc(uid);
+  const studentSnap = await studentRef.get();
 
-  await ref.set(
-    {
+  if (!studentSnap.exists) {
+    await studentRef.set({
       uid,
       email,
       name: student.name,
       studentRoll: student.studentRoll,
       role: "student",
-      lastLoginAt: admin.firestore.FieldValue.serverTimestamp(),
-    },
-    { merge: true }
-  );
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    await admin.auth().setCustomUserClaims(uid, {
+      role: "student",
+      studentRoll: student.studentRoll,
+    });
+  }
 
   return res.status(200).json(
     new ApiResponse({
@@ -169,6 +161,7 @@ if (mess) {
     })
   );
 });
+
 
 
 

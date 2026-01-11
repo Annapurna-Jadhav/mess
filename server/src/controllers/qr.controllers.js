@@ -349,9 +349,6 @@ export const scanMealQRFromImage = asyncHandler(async (req, res) => {
 
  
   req.body.token = token;
-  console.log("VISION QR:", token);
-console.log("LENGTH:", token.length);
-
-  console.log(`scan meal entry ${token}`)
+ 
   return scanMealEntry(req, res);
 });
