@@ -9,24 +9,21 @@ export function addDaysISO(baseISO, days) {
   return d.toISOString().split("T")[0];
 }
 
-/**
- * Returns Monday → Sunday of current week
- */
-export function getWeekRangeISO(baseISO) {
+
+
+
+
+export function getRollingWeekRangeISO(baseISO = new Date().toISOString()) {
   const date = new Date(baseISO);
-  const day = date.getDay(); // 0=Sun, 1=Mon
 
-  // move to Monday
-  const mondayOffset = day === 0 ? -6 : 1 - day;
-  const monday = new Date(date);
-  monday.setDate(date.getDate() + mondayOffset);
+  const start = new Date(date);
+  start.setDate(date.getDate() - 3);
 
-  // Sunday = Monday + 6
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
+  const end = new Date(date);
+  end.setDate(date.getDate() + 3);
 
   return {
-    start: monday.toISOString().split("T")[0],
-    end: sunday.toISOString().split("T")[0],
+    start: start.toISOString().split("T")[0],
+    end: end.toISOString().split("T")[0],
   };
 }

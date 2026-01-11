@@ -6,7 +6,7 @@ import { scanQRFromImage } from "../utils/scanQRFromImage.js";
 import  asyncHandler from "../utils/asyncHandler.js";
 import  ApiResponse from "../utils/ApiResponse.js";
 import  ApiError  from "../utils/ApiError.js";
-import { getTodayISO ,addDaysISO,getWeekRangeISO} from "../utils/date.js";
+import { getTodayISO ,addDaysISO,getRollingWeekRangeISO} from "../utils/date.js";
 
 import { initStudentMealDays } from "../utils/initStudentMealDays.js";
 
@@ -417,7 +417,7 @@ export const getStudentMealDays = asyncHandler(async (req, res) => {
   }
 
   const todayISO = getTodayISO();
-  const { start, end } = getWeekRangeISO(todayISO);
+  const { start, end } = getRollingWeekRangeISO(todayISO);
 
   
   const snap = await db
