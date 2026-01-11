@@ -39,7 +39,7 @@ export default function MealQRModal({
 
   if (!open || !token) return null;
 
-  /* ================= DOWNLOAD QR ================= */
+  
 
   const handleDownloadQR = () => {
     if (!qrRef.current) return;

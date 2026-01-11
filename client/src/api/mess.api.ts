@@ -1,4 +1,4 @@
-// src/api/mess.api.ts
+
 import axiosClient from "./axiosClient.ts";
 
 export const applyMessManager = async (payload: any) => {

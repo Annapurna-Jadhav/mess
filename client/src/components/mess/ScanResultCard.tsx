@@ -61,7 +61,7 @@ export function ScanResultCard({
         </div>
       )}
 
-      {/* ================= ACTION ================= */}
+    
       {success && onNextScan && (
         <Button
           onClick={onNextScan}

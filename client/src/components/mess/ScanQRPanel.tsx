@@ -17,14 +17,13 @@ export default function ScanQRPanel({
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
-  /* ================= CAMERA ================= */
+
 
   const startCamera = async () => {
     try {
-      setCameraOn(true); // 🔑 ensure video is rendered first
+      setCameraOn(true); 
 
-      await new Promise((r) => setTimeout(r, 50)); // allow DOM paint
-
+      await new Promise((r) => setTimeout(r, 50));
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "environment" },
         audio: false,
@@ -91,7 +90,6 @@ export default function ScanQRPanel({
     });
   };
 
-  /* ================= IMAGE UPLOAD ================= */
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -125,12 +123,10 @@ export default function ScanQRPanel({
     }
   };
 
-  /* ================= UI ================= */
 
   return (
     <div className="flex flex-col items-center justify-center gap-6">
 
-      {/* CAMERA PANEL */}
       <div className="w-full max-w-md space-y-4">
 
         {!cameraOn && !preview && (

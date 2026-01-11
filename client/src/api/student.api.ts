@@ -22,7 +22,7 @@ export const verifyReceiptApi = async (file: File) => {
       ...res.data,
     };
   } catch (err: any) {
-    // ✅ HANDLE RECEIPT ALREADY USED (409)
+
     if (err.response?.status === 409) {
       return {
         success: true,
@@ -33,7 +33,7 @@ export const verifyReceiptApi = async (file: File) => {
       };
     }
 
-    // ❌ REAL ERROR — rethrow
+ 
     throw err;
   }
 };
@@ -50,7 +50,7 @@ export const selectMess = (messId: string) => {
 export const getStudentMealDays = async () => {
   const res = await axiosClient.get("/student/meal-days");
 
-  console.log("🟢 API RESPONSE:", res.data);
+ 
 
   
   return res.data.data.days; 

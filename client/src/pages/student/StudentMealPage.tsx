@@ -82,34 +82,7 @@ useEffect(() => {
 }, [days]);
 
  
-  //   try {
-  //     await axiosClient.post("/student/declare-absent", {
-  //       date: selectedDay!.date,
-  //       mealType: meal,
-  //     });
-
-  //     toast.success("Absent declared");
-
-  //     setDays((prev) =>
-  //       prev.map((d) =>
-  //         d.date === selectedDay!.date
-  //           ? {
-  //               ...d,
-  //               meals: {
-  //                 ...d.meals,
-  //                 [meal]: {
-  //                   ...d.meals[meal],
-  //                   status: "DECLARED_ABSENT",
-  //                 },
-  //               },
-  //             }
-  //           : d
-  //       )
-  //     );
-  //   } catch (err: any) {
-  //     toast.error(err.response?.data?.message || "Action failed");
-  //   }
-  // };
+  
 const handleDeclareAbsent = async (meal: MealType) => {
   try {
     await axiosClient.post("/student/declare-absent", {
